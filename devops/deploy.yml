@@ -12,6 +12,11 @@
         repo: "{{ repository }}"
         dest: "{{ path }}"
 
+    - name: Install dependencies
+      shell: yarn
+      args:
+        chdir: "{{ path }}"
+
     - name: Pull API container
       shell: docker pull {{ image }}
 
