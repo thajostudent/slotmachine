@@ -12,11 +12,13 @@ jobs:
       - checkout
       - run: npm install
       - run: npm test
+      - run: docker build -t coinflippers/slotmachine .
 
   deployment:
-    prod:
-      branch: master
-      commands:
-        - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-        - docker push coinflippers/slotmachine
-        - ansible-playbook -i devops/inventory.yml devops/deploy.yml
+    docker:
+      - image: circleci/node:8.9.1
+    working_directory: ~/tmp
+    steps:
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - run: docker push coinflippers/slotmachine
+      - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
