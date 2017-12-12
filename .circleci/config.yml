@@ -38,6 +38,7 @@ jobs:
       - image: williamyeh/ansible:ubuntu16.04
     working_directory: ~/tmp
     steps:
+      - checkout
       - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
 
 workflows:
