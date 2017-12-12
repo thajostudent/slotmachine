@@ -30,7 +30,9 @@ jobs:
       - run: docker push coinflippers/slotmachine
       - store_test_results:
           path: ~/test-results
-          
+      - store_artifacts:
+          path: ~/test-results
+
   deploy-job:
     docker:
       - image: circleci/node:8.9.1
