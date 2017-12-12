@@ -35,12 +35,9 @@ jobs:
 
   deploy-job:
     docker:
-      - image: circleci/node:8.9.1
+      - image: ansible/ansible
     working_directory: ~/tmp
     steps:
-      - run: |
-          pip install ansible
-          pip install --upgrade setuptools
       - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
 
 workflows:
