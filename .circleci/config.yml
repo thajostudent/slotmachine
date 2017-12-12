@@ -35,7 +35,7 @@ jobs:
 
   deploy-job:
     docker:
-      - image: ansible/ansible
+      - image: williamyeh/ansible:ubuntu16.04
     working_directory: ~/tmp
     steps:
       - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
