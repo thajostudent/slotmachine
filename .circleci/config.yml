@@ -5,6 +5,7 @@ dependencies:
     - pip install --upgrade setuptools
 jobs:
   build:
+    machine: true
     working_directory: ~/tmp
     docker:
       - image: circleci/node:8.9.1
@@ -15,6 +16,7 @@ jobs:
       - run: docker build -t coinflippers/slotmachine .
 
   deployment:
+    machine: true
     docker:
       - image: circleci/node:8.9.1
     working_directory: ~/tmp
