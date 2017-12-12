@@ -15,7 +15,7 @@ jobs:
       - run: npm test
       - run: docker build -t coinflippers/slotmachine .
 
-  deployment:
+  deploy:
     docker:
       - image: circleci/node:8.9.1
     working_directory: ~/tmp
