@@ -1,4 +1,8 @@
 version: 2
+dependencies:
+  pre:
+    - pip install ansible
+    - pip install --upgrade setuptools
 jobs:
   build:
     working_directory: ~/tmp
@@ -8,3 +12,11 @@ jobs:
       - checkout
       - run: npm install
       - run: npm test
+
+  deployment:
+    prod:
+      branch: master
+      commands:
+        - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        - docker push coinflippers/slotmachine
+        - ansible-playbook -i devops/inventory.yml devops/deploy.yml
