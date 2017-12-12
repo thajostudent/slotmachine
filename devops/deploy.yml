@@ -8,8 +8,9 @@
     image: coinflippers/slotmachine
   tasks:
     - name: Pull github code
-      git: repo={{ repository }}
-           dest={{ path }}
+      git: 
+        repo: "{{ repository }}"
+        dest: "{{ path }}"
 
     - name: Pull API container
       shell: docker pull {{ image }}
@@ -17,4 +18,4 @@
     - name: Start API container
       shell: docker-compose -f docker-compose-prod.yml up -d slotmachine
       args:
-        chdir: {{ path }}
+        chdir: "{{ path }}"
