@@ -4,7 +4,7 @@
   become: yes
   vars:
     repository: https://github.com/coinflippers/slotmachine.git
-    path: /home/ubuntu/www
+    path: /usr/src/app
     image: coinflippers/slotmachine
   tasks:
     - name: Pull github code
