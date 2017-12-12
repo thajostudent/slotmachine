@@ -3,7 +3,7 @@ dependencies:
   pre:
     - pip install ansible
     - pip install --upgrade setuptools
-    
+
 jobs:
   build-job:
     working_directory: ~/tmp
@@ -12,9 +12,22 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
-      - run: npm install
+      - restore_cache:
+          keys: 
+            - slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - slotmachine-npm-deps-{{ .Branch }}-
+            - slotmachine-npm-deps-
+      - run:
+          name: Install dependencies
+          command: yarn
       - run: npm test
+      - save_cache:
+          key: slotmachine-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - "/node_modules"
       - run: docker build -t coinflippers/slotmachine .
+      
+  
 
   deploy-job:
     docker:
