@@ -26,17 +26,14 @@ jobs:
           paths:
             - "/node_modules"
       - run: docker build -t coinflippers/slotmachine .
-      
-  
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - run: docker push coinflippers/slotmachine
 
   deploy-job:
     docker:
       - image: circleci/node:8.9.1
     working_directory: ~/tmp
     steps:
-      - setup_remote_docker
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      - run: docker push coinflippers/slotmachine
       - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
 
 workflows:
