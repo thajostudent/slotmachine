@@ -13,9 +13,8 @@
         dest: "{{ path }}"
 
     - name: Install dependencies
-      shell: yarn
-      args:
-        chdir: "{{ path }}"
+      npm:
+        path: "{{ path }}"
 
     - name: Pull API container
       shell: docker pull {{ image }}
