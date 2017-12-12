@@ -12,10 +12,6 @@
         repo: "{{ repository }}"
         dest: "{{ path }}"
 
-    - name: Install dependencies
-      npm:
-        path: "{{ path }}"
-
     - name: Pull API container
       shell: docker pull {{ image }}
 
