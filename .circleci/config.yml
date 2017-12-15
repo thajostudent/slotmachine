@@ -1,11 +1,11 @@
 version: 2
 jobs:
-  build-job:
+  build:
     working_directory: ~/tmp
     docker:
       - image: circleci/node:8.9.1
+      - image: circleci/mongo:3.4
     steps:
-      - setup_remote_docker
       - checkout
       - restore_cache:
           keys: 
@@ -15,40 +15,91 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn
+      #- save_cache:
+      #    key: slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      #    paths:
+      #      - "/node_modules"
+      #- run: docker build -t coinflippers/slotmachine .
+      #- run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      #- run: docker push coinflippers/slotmachine
+
+  unit-tests:
+    docker:
+      - image: circleci/node:8.9.1
+      - image: circleci/mongo:3.4
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - slotmachine-npm-deps-{{ .Branch }}-
+            - slotmachine-npm-deps-
+      - run:
+          name: Install dependencies
+          command: yarn
       - run: mkdir ~/test-results
       - run: 
           command: |
-            npm test
+            npm run test:unit
             cp junit.xml ~/test-results/junit.xml
           when: always
       - save_cache:
           key: slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - "/node_modules"
-      - run: docker build -t coinflippers/slotmachine .
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      - run: docker push coinflippers/slotmachine
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results
 
-  deploy-job:
+  integration-tests:
     docker:
-      - image: williamyeh/ansible:ubuntu16.04
-    working_directory: ~/tmp
+      - image: circleci/node:8.9.1
+      - image: circleci/mongo:3.4
     steps:
       - checkout
-      - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
+      - restore_cache:
+          keys:
+            - slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - slotmachine-npm-deps-{{ .Branch }}-
+            - slotmachine-npm-deps-
+      - run:
+          name: Install dependencies
+          command: yarn
+      - run: mkdir ~/test-results
+      - run:
+          command: |
+            npm run test:integration
+            cp junit.xml ~/test-results/junit.xml
+          when: always
+      - save_cache:
+          key: slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - "/node_modules"
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results
+
+  #deploy:
+  #  docker:
+  #    - image: williamyeh/ansible:ubuntu16.04
+  #  working_directory: ~/tmp
+  #  steps:
+  #    - checkout
+  #    - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
 
 workflows:
   version: 2
-  build-deploy:
+  test-build-deploy:
     jobs:
-      - build-job
-      - deploy-job:
+      - unit-tests
+      - integration-tests:
           requires:
-            - build-job
-          filters:
-            branches:
-              only: master
+            - unit-tests
+      - build:
+          requires:
+            - integration-tests
+      #- deploy:
+      #    requires:
+      #      - build
