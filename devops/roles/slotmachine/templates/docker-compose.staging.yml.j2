@@ -2,7 +2,7 @@ version: "2"
 
 networks:
   coinflippers:
-  
+
 services:
   web:
     image: {{ docker_image }}
@@ -15,6 +15,7 @@ services:
           - slotmachine
     links:
       - mongo
+    command: npm run start
 
   mongo:
     image: mongo

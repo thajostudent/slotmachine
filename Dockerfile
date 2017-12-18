@@ -13,7 +13,7 @@
 
 # EXPOSE 8080
 
-FROM node:8.9.1
+FROM node:8.9.3-alpine
 
 ADD package.json /tmp/package.json
 RUN cd /tmp && npm install
