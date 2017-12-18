@@ -2,11 +2,7 @@ version: "2"
 
 networks:
   coinflippers:
-
-volumes:
-  nginx-certs:
-    external: true
-
+  
 services:
   web:
     image: {{ docker_image }}
