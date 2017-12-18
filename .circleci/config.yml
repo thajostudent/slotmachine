@@ -1,105 +1,118 @@
 version: 2
 jobs:
-  build:
-    working_directory: ~/tmp
+  unit-tests:
     docker:
       - image: circleci/node:8.9.1
-      - image: circleci/mongo:3.4
     steps:
       - checkout
       - restore_cache:
           keys: 
-            - slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - slotmachine-npm-deps-{{ .Branch }}-
-            - slotmachine-npm-deps-
+            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-cache-{{ .Branch }}-
+            - yarn-cache-
       - run:
           name: Install dependencies
           command: yarn
-      #- save_cache:
-      #    key: slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      #    paths:
-      #      - "/node_modules"
-      #- run: docker build -t coinflippers/slotmachine .
-      #- run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      #- run: docker push coinflippers/slotmachine
-
-  unit-tests:
-    docker:
-      - image: circleci/node:8.9.1
-      - image: circleci/mongo:3.4
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - slotmachine-npm-deps-{{ .Branch }}-
-            - slotmachine-npm-deps-
-      - run:
-          name: Install dependencies
-          command: yarn
-      - run: mkdir ~/test-results
+      - save_cache:
+          key: yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - "~/.cache/yarn/v1"
       - run: 
+          name: Create test directory
+          command: mkdir ~/junit
+      - run:
           command: |
             npm run test:unit
-            cp junit.xml ~/test-results/junit.xml
+            cp junit.xml ~/junit/junit.xml
           when: always
-      - save_cache:
-          key: slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - "/node_modules"
       - store_test_results:
-          path: ~/test-results
+          path: ~/junit
       - store_artifacts:
-          path: ~/test-results
+          path: ~/junit
 
   integration-tests:
     docker:
-      - image: circleci/node:8.9.1
-      - image: circleci/mongo:3.4
+      - image: fmenkes/docker-compose-git
     steps:
       - checkout
+      - setup_remote_docker
       - restore_cache:
           keys:
-            - slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - slotmachine-npm-deps-{{ .Branch }}-
-            - slotmachine-npm-deps-
-      - run:
-          name: Install dependencies
-          command: yarn
-      - run: mkdir ~/test-results
-      - run:
-          command: |
-            npm run test:integration
-            cp junit.xml ~/test-results/junit.xml
-          when: always
-      - save_cache:
-          key: slotmachine-npm-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-{{ .Branch }}
           paths:
-            - "/node_modules"
+            - /caches/app.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app.tar | true
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build --cache-from=coinflippers/slotmachine -t coinflippers/slotmachine .
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/app.tar coinflippers/slotmachine
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/app.tar
+      - run: 
+          name: Create test directory
+          command: mkdir ~/junit
+      - run:
+          name: Run tests
+          command: docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+      - run:
+          name: Copy test results to artifact folder
+          command: |
+            docker cp web:/opt/app/junit.xml ~/junit/junit.xml
+          when: always
+      - run:
+          name: Login to Docker Hub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            fi
+      - run:
+          name: Push image to Docker Hub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker push coinflippers/slotmachine
+            fi
       - store_test_results:
-          path: ~/test-results
+          path: ~/junit
       - store_artifacts:
-          path: ~/test-results
+          path: ~/junit
 
-  #deploy:
-  #  docker:
-  #    - image: williamyeh/ansible:ubuntu16.04
-  #  working_directory: ~/tmp
-  #  steps:
-  #    - checkout
-  #    - run: ansible-playbook -i devops/inventory.yml devops/deploy.yml
-
+  staging:
+    docker:
+      - image: williamyeh/ansible:ubuntu16.04
+    working_directory: ~/tmp
+    steps:
+      - checkout
+      - run:
+          name: Append variables to host_vars file
+          command: |
+            echo "DOCKER_USER: ${DOCKER_USER}
+            DOCKER_PASSWORD: ${DOCKER_PASSWORD}" >> devops/environments/staging/host_vars/slotmachine
+      - run: 
+          name: Run Ansible playbook
+          command: ansible-playbook -i devops/environments/staging/inventory.yml devops/site.yml
+  
 workflows:
   version: 2
-  test-build-deploy:
+  slotmachine:
     jobs:
       - unit-tests
       - integration-tests:
           requires:
             - unit-tests
-      - build:
+      - staging:
           requires:
             - integration-tests
-      #- deploy:
-      #    requires:
-      #      - build
+          filters:
+            branches:
+              only: master

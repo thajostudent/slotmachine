@@ -1,0 +1,3 @@
+working_directory: /opt/app
+docker_compose_version: 1.17.1
+docker_image: coinflippers/slotmachine

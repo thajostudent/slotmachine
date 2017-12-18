@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - common
+
+- hosts: server
+  become: yes
+  roles:
+    - docker
+    - server
