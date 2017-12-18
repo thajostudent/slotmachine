@@ -64,7 +64,7 @@ jobs:
           command: mkdir ~/junit
       - run:
           name: Run tests
-          command: docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+          command: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
       - run:
           name: Copy test results to artifact folder
           command: |
