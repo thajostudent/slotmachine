@@ -15,8 +15,10 @@
 
 FROM node:8.9.1
 
-ADD . /usr/src/app
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
+RUN mkdir -p /usr/src/app && cp -a /tmp/node_modules /usr/src/app/
 
 WORKDIR /usr/src/app/
 
-RUN npm install
+COPY . .
