@@ -14,10 +14,12 @@
   },
   "author": " <>",
   "dependencies": {
+    "axios": "^0.17.1",
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "helmet": "^3.1.0",
+    "jenkins": "^0.20.1",
     "mongoose": "^4.7.0",
     "morgan": "^1.7.0"
   },
