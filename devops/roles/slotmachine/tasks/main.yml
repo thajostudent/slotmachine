@@ -11,8 +11,8 @@
   ignore_errors: yes
 
 - name: Copy nginx configuration
-  template:
-    src: nginx.conf.j2
+  copy:
+    src: nginx.conf
     dest: "{{ working_directory }}/nginx.conf"
 
 - name: Login to Docker Hub
