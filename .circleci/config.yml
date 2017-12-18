@@ -68,7 +68,7 @@ jobs:
       - run:
           name: Copy test results to artifact folder
           command: |
-            docker cp web:/opt/app/junit.xml ~/junit/junit.xml
+            docker cp web:/usr/src/app/junit.xml ~/junit/junit.xml
           when: always
       - run:
           name: Login to Docker Hub
