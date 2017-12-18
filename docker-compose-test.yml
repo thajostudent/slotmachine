@@ -11,13 +11,6 @@ services:
     command: npm run test:integration
 
   mongo:
-    image: mongo
+    image: mongo:3.4.10-jessie
     ports:
       - "27017:27017"
-    volumes_from:
-      - mongodata
-
-  mongodata:
-    image: tianon/true
-    volumes:
-      - /data/db
