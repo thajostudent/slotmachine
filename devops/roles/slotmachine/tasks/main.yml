@@ -4,10 +4,13 @@
     path: "{{ working_directory }}"
     state: directory
 
-- name: Stop system nginx service
-  service:
-    name: nginx
-    state: stopped
+- name: Check if nginx exists
+    stat: path=/etc/init.d/nginx
+    register: service_status
+
+- name: Stop nginx
+    service: name=ngninx state=stopped
+    when: service_status.stat.exists
 
 - name: Copy nginx configuration
   template:
