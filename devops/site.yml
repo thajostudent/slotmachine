@@ -4,8 +4,8 @@
   roles:
     - common
 
-- hosts: server
+- hosts: slotmachine
   become: yes
   roles:
     - docker
-    - server
+    - slotmachine
