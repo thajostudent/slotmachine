@@ -46,3 +46,5 @@ jspm_packages
 # Test-report
 junit.xml
 .vscode
+.gitattributes
+.idea
