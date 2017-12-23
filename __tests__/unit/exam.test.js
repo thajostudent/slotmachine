@@ -1,3 +1,6 @@
+/* global expect, jest */
+
+
 const tools = require('../../lib/tools');
 
 const getSemester = tools.getSemester;
