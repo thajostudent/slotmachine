@@ -1,20 +1,40 @@
+const moment = require('moment');
+
 const Controller = require('../../lib/controller');
 const examFacade = require('./facade');
 const meetingFacade = require('../meeting/facade');
 const {
-  createExamToObject
+  createExamToObject,
+  getSemester
 } = require('../../lib/tools');
 
 
 class ExamController extends Controller {
-  testSlackAPI(req, res, next) {
-    res.status(200).send({
-      text: req.body
-    });
-  }
-
   bookExam(req, res, next) {
-    res.status(200).send();
+    return this.facade.findOne({
+      course: req.body.channel_name + getSemester()
+    }).then((doc) => {
+      if (!doc) {
+        return res.send({
+          text: 'Sorry, no exams found for this course.'
+        });
+      }
+
+      return res.send({
+        text: `Meetings for exam ${doc.name}:`,
+        attachments: doc.meetings.map((meeting, index) => (
+          {
+            title: `Meeting ${index + 1}:`,
+            title_link: 'https://www.google.com',
+            text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`
+          }
+        ))
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.send({ text: 'Sorry, something went wrong.' });
+    });
   }
 
   registerExam(req, res, next) {
@@ -25,7 +45,7 @@ class ExamController extends Controller {
     const bodyObj = createExamToObject(req.body.text);
 
     // Create the exam
-    examFacade.create({
+    this.facade.create({
       course: req.body.channel_name + bodyObj.semester,
       name: bodyObj.name,
       attempt: 1

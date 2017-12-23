@@ -1,13 +1,17 @@
 const Facade = require('../../lib/facade');
 const examSchema = require('./schema');
-const meetingSchema = require('../meeting/schema');
-
 
 class ExamFacade extends Facade {
-  
-    find(...args) {
+  find(...args) {
     return this.model
       .find(...args)
+      .populate('meetings')
+      .exec();
+  }
+
+  findOne(...args) {
+    return this.model
+      .findOne(...args)
       .populate('meetings')
       .exec();
   }

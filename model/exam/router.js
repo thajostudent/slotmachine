@@ -9,9 +9,6 @@ router.route('/')
 router.route('/book')
   .post((...args) => controller.bookExam(...args));
 
-router.route('/test')
-  .post((...args) => controller.testSlackAPI(...args));
-
 router.route('/:id')
   .put((...args) => controller.update(...args))
   .get((...args) => controller.findById(...args))
