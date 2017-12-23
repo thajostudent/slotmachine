@@ -7,6 +7,16 @@ const {
 
 
 class ExamController extends Controller {
+  testSlackAPI(req, res, next) {
+    res.status(200).send({
+      text: req.body
+    });
+  }
+
+  bookExam(req, res, next) {
+    res.status(200).send();
+  }
+
   registerExam(req, res, next) {
     // /createexam Exam1 25/11 noOfMeetings Length
     // /createexam Exam1 25/11 8 1
