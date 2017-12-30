@@ -11,6 +11,7 @@ const {
 
 class ExamController extends Controller {
   bookExam(req, res, next) {
+    console.log(req.body.payload);
     return this.facade.findOne({
       course: req.body.channel_name + getSemester()
     }).then((doc) => {
@@ -26,7 +27,22 @@ class ExamController extends Controller {
           {
             title: `Meeting ${index + 1}:`,
             title_link: 'https://www.google.com',
-            text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`
+            text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`,
+            callback_id: "bookExam",
+            actions: [
+                {
+                    "name": "book",
+                    "text": "Book",
+                    "type": "button",
+                    "style": "primary",
+                    "value": "test",
+                    "confirm": {
+                        "title": "Are you sure?",
+                        "ok_text": "Yes",
+                        "dismiss_text": "No"
+                    }
+                }
+            ]
           }
         ))
       });
@@ -38,6 +54,7 @@ class ExamController extends Controller {
   }
 
   registerExam(req, res, next) {
+    // /createExam Exam-1 31/12 noOfMeetings Length
     // /createexam Exam1 25/11 noOfMeetings Length
     // /createexam Exam1 25/11 8 1
     // one day exam, max 8 1 hour meetings
@@ -70,6 +87,10 @@ class ExamController extends Controller {
         });
       });
     });
+  }
+  
+  create(req, res, next){
+    console.log(req.body.text);
   }
 }
 
