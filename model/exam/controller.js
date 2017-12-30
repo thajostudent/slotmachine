@@ -11,7 +11,6 @@ const {
 
 class ExamController extends Controller {
   bookExam(req, res, next) {
-    console.log(req.body.payload);
     return this.facade.findOne({
       course: req.body.channel_name + getSemester()
     }).then((doc) => {
@@ -58,7 +57,9 @@ class ExamController extends Controller {
     // /createexam Exam1 25/11 noOfMeetings Length
     // /createexam Exam1 25/11 8 1
     // one day exam, max 8 1 hour meetings
-
+    this.facade.remove({}, function(err) { 
+   console.log('collection removed') 
+    });
     const bodyObj = createExamToObject(req.body.text);
 
     // Create the exam
@@ -71,9 +72,11 @@ class ExamController extends Controller {
 
       // Create a meeting for each meeting, time needs fixing...
       for (let i = 0; i < bodyObj.meetings; i += 1) {
+        var date = new Date();
+        date = bodyObj.date.setHours(bodyObj.date.getHours() + 1)
         meetingPromises.push(meetingFacade.create({
-          startTime: bodyObj.date,
-          endTime: bodyObj.date
+          startTime: date,
+          endTime: date
         }));
       }
       Promise.all(meetingPromises).then((docs) => {
