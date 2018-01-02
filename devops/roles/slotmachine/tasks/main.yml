@@ -33,3 +33,4 @@
 
 - name: Remove dangling images
   shell: docker rmi $(docker images -qa -f "dangling=true")
+  ignore_errors: yes
