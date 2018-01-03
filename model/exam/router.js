@@ -4,7 +4,11 @@ const router = new Router();
 
 router.route('/')
   .get((...args) => controller.find(...args))
-  .post((...args) => controller.registerExam(...args));
+  // .post((...args) => controller.registerExam(...args));
+  .post((...args) => controller.createExam(...args));
+
+router.route('/save')
+  .post((...args) => controller.saveExam(...args));
 
 router.route('/book')
   .post((...args) => controller.bookExam(...args));
