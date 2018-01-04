@@ -11,7 +11,7 @@ class UserController extends Controller {
     token: process.env.SLOT
   })
   .then(function (response) {
-    console.log(response.body);
+    console.log(response);
   })
   .catch(function (error) {
     console.log(error);
