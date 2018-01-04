@@ -49,7 +49,7 @@ class MeetingController extends Controller {
                       try {
                         const response = await axios({
                         method: 'post',
-                        url: 'https://slack.com/api/users.info',
+                        url: 'https://slack.com/api/users.list',
                         headers: {
                         Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
                         'Content-Type': 'application/x-www-form-urlencoded'
