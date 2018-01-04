@@ -146,8 +146,9 @@ class InteractivecompController extends Controller {
 
   async bookExam(req, res, next) {
 
-    const userId = JSON.parse(req.body.payload).user.id;
-    const meetingId = JSON.parse(req.body.payload).actions[0].value;
+    const payload = JSON.parse(req.body.payload);
+    const userId = payload.user.id;
+    const meetingId = payload.actions[0].value;
     const meeting = await MeetingFacade.findById(meetingId);
 
     axios({
