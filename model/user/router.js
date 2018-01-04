@@ -12,7 +12,6 @@ router.route('/:id')
   .delete((...args) => controller.remove(...args));
 
 router.route('/hook')
-  
-  .post((...args) => controller.create(...args));
+  .post((...args) => controller.apiTest(...args));
 
 module.exports = router;
