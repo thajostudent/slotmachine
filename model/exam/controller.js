@@ -28,20 +28,20 @@ class ExamController extends Controller {
             title: `Meeting ${index + 1}:`,
             title_link: 'https://www.google.com',
             text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`,
-            callback_id: "bookExam",
+            callback_id: 'bookExam',
             actions: [
-                {
-                    "name": "book",
-                    "text": "Book",
-                    "type": "button",
-                    "style": "primary",
-                    "value": "test",
-                    "confirm": {
-                        "title": "Are you sure?",
-                        "ok_text": "Yes",
-                        "dismiss_text": "No"
-                    }
+              {
+                name: 'book',
+                text: 'Book',
+                type: 'button',
+                style: 'primary',
+                value: 'test',
+                confirm: {
+                  title: 'Are you sure?',
+                  ok_text: 'Yes',
+                  dismiss_text: 'No'
                 }
+              }
             ]
           }
         ))
