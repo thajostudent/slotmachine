@@ -20,7 +20,7 @@ class UserController extends Controller {
     // user
     // token
     
-    console.log(req.body);
+    //console.log(req.body);
     const users = req.body.text.split(" ")
     const channel = req.body.channel_name.split("-")[0]
     console.log(users);
