@@ -40,12 +40,12 @@ class MeetingController extends Controller {
                 console.log("failCount", data.failCount);
                 
                 if(data.failCount === 0){
-                const user = userFacade.findOne({username:jobObj.name})
-                const course = courseFacade.findOne({title:'0dv000'})
-                console.log(user)
+                  const user = userFacade.findOne({username:jobObj.name})
+                  const course = courseFacade.findOne({title:'0dv000'})
+                  console.log(user)
                   console.log(course)
-                course.users.push(user);
-                course.save();
+                  course.users.push(user);
+                  course.save();
                 }
             });
         }
