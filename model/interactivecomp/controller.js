@@ -158,6 +158,15 @@ class InteractivecompController extends Controller {
     const meeting = await MeetingFacade.findById(meetingId);
     const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
 
+    const user = await UserFacade.findOne({ username });
+
+    // TODO: check why code runs after this return
+    user.exams.forEach((exam) => {
+      if (exam.equals(examId)) {
+        return res.send('Exam already booked');
+      }
+    });
+
     UserFacade.update(
       { username },
       { $addToSet: { exams: examId } },
@@ -175,7 +184,6 @@ class InteractivecompController extends Controller {
     });
 
     return res.send();
-
   }
 
   payload(req, res, next) {
