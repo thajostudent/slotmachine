@@ -2,5 +2,5 @@
 all:
   hosts:
     slotmachine:
-      ansible_host: 194.47.174.62
+      ansible_host: 194.47.174.55
       ansible_user: ubuntu
