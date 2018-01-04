@@ -51,7 +51,7 @@ class MeetingController extends Controller {
                         method: 'post',
                         url: 'https://slack.com/api/users.info',
                         headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${process.env.SLOT}`,
                         'Content-Type': 'application/x-www-form-urlencoded'
                         },
                           data: `user=${req.body.user_id}`
