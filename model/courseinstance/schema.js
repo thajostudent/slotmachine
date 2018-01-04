@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const courseinstanceSchema = new Schema({
-  title: { type: String, required: true },
-  body: { type: String }
+  year: { type: Number, required: true },
+  semester: { type: String, required: true}
 });
 
 
