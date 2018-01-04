@@ -6,6 +6,16 @@ class UserController extends Controller {
   
   create(req, res, next) {
     
+    axios.post('https://slack.com/api/users.info', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
     // https://slack.com/api/users.info
     // user
     // token
