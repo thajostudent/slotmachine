@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const userSchema = new Schema({
-  title: { type: String, required: true },
-  body: { type: String }
+  username: { type: String, required: true },
+  exams: [{ type: String }]
 });
 
 module.exports =  userSchema;
