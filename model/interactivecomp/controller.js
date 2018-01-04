@@ -144,10 +144,17 @@ class InteractivecompController extends Controller {
     });
   }
 
+  bookExam(req, res, next) {
+    // TODO: book exam
+    console.log(req.body);
+  }
+
   payload(req, res, next) {
     switch (JSON.parse(req.body.payload).callback_id) {
       case 'createExam':
         return this.saveExam(req, res, next);
+      case 'bookExam':
+        return this.bookExam(req, res, next);
       default:
         break;
     }
