@@ -18,6 +18,7 @@
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "generator-api": "^1.5.2",
     "helmet": "^3.1.0",
     "jenkins": "^0.20.1",
     "jenkins-api": "^0.3.1",
