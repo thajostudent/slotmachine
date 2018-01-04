@@ -54,8 +54,11 @@ class MeetingController extends Controller {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/x-www-form-urlencoded'
                         },
-        data: `user=${req.body.user_id}`
-      });
+                          data: `user=${req.body.user_id}`
+                        });
+                      } catch(e){
+                        console.log()
+                      }
                   
                 }
             });
