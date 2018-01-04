@@ -9,7 +9,9 @@ class UserController extends Controller {
     const users = req.body.text.split(" ")
     console.log(users);
     
-    users.map()
+    const promises = users.map((user)=>{
+      userFacade.create({username})
+    })
     
     res.send(req.body).status(200);
   }
