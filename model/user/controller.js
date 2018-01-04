@@ -5,7 +5,7 @@ class UserController extends Controller {
   
   create(req, res, next) {
     
-    console.log(req.body.text);
+    console.log(req.body);
     const users = req.body.text.split(" ")
     console.log(users);
     
