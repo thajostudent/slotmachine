@@ -40,6 +40,7 @@ class MeetingController extends Controller {
               if(err){console.log(err)} 
               if(data.failCount === 0){                
                   const user = await userFacade.findOne({username:jobObj.name.split("-")[0]});
+                  // TODO: Fix hardcoded value
                   const course = await courseFacade.findOne({title:'0dv000'})                  
                   course.users.push(user);
                   await course.save();
