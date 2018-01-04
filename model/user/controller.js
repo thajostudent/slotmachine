@@ -6,6 +6,8 @@ class UserController extends Controller {
   create(req, res, next) {
     res.send(req.body).status(200);
   }
+  
+  
 }
 
 module.exports = new UserController(userFacade);

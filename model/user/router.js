@@ -11,7 +11,7 @@ router.route('/:id')
   .get((...args) => controller.findById(...args))
   .delete((...args) => controller.remove(...args));
 
-router.route('/')
-.post((...args) => controller.create(...args));
+router.route('/create')
+  .post((...args) => controller.createUsers(...args));
 
 module.exports = router;
