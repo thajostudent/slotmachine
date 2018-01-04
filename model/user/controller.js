@@ -10,8 +10,10 @@ class UserController extends Controller {
     console.log(users);
     
     const promises = users.map((user)=>{
-      userFacade.create({username})
+      userFacade.create({username:user})
     })
+    
+    Promise.all(promises).then()
     
     res.send(req.body).status(200);
   }
