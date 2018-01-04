@@ -43,8 +43,8 @@ class MeetingController extends Controller {
                   const user = await userFacade.findOne({username:jobObj.name.split("-")[0]});
                   const course = await courseFacade.findOne({title:'0dv000'})                  
                   course.users.push(user);
-                  course.save();
-                  
+                  await course.save();
+                  // Send something the user
                   
                 }
             });
