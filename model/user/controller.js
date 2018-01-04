@@ -1,5 +1,6 @@
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
+const axios = require('axios')
 
 class UserController extends Controller {
   
