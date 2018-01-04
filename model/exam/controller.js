@@ -54,7 +54,7 @@ class ExamController extends Controller {
 
   registerExam(req, res, next) {
     // /createExam Exam-1 31/12 noOfMeetings Length
-    // /createexam Exam1 25/11 noOfMeetings Length
+    
     // /createexam Exam1 25/11 8 1
     // one day exam, max 8 1 hour meetings
     this.facade.remove({}, function(err) { 
