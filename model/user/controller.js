@@ -5,6 +5,10 @@ class UserController extends Controller {
   
   create(req, res, next) {
     
+    // https://slack.com/api/users.info
+    // user
+    // token
+    
     console.log(req.body);
     const users = req.body.text.split(" ")
     const channel = req.body.channel_name.split("-")[0]
