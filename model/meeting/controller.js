@@ -39,8 +39,8 @@ class MeetingController extends Controller {
              const jenkinsData = await jenkinsapi.test_result(jobObj.name, jobObj.number, async function(err, data) {
               if(err){console.log(err)} 
               if(data.failCount === 0){
-                console.log(jobObj.name)  
-                console.log(jobObj.name.split("-")[0])
+                
+                
                   const user = await userFacade.findOne({username:jobObj.name.split("-")[0]});
                   const course = await courseFacade.findOne({title:'0dv000'})                  
                   course.users.push(user);
@@ -53,9 +53,9 @@ class MeetingController extends Controller {
                         headers: {
                         Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
                         'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                          data: `user=${req.body.user_id}`
-                        });
+                        }});
+                        
+                        console.log(response);
                       } catch(e){
                         console.log(e);
                       }
