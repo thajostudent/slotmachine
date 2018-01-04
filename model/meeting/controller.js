@@ -38,7 +38,7 @@ class MeetingController extends Controller {
              const jenkinsData = await jenkinsapi.test_result(jobObj.name, jobObj.number, async function(err, data) {
               if(err){console.log(err)} 
               if(data.failCount === 0){
-                  
+                  console.log(jobObj.name.split("-")[0])
                   const user = await userFacade.findOne({username:jobObj.name.split("-")[0]});
                   const course = await courseFacade.findOne({title:'0dv000'})
                   console.log(user)
