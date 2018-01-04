@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 
-const userExamSchema = new Schema({
+const userexamSchema = new Schema({
   title: { type: String, required: true },
   body: { type: String }
 });
 
 
-module.exports =  userExamSchema;
+module.exports =  userexamSchema;
