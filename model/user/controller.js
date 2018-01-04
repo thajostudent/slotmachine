@@ -6,7 +6,10 @@ class UserController extends Controller {
   create(req, res, next) {
     
     console.log(req.body.text);
-    createUserArray()
+    const users = req.body.text.split(" ")
+    console.log(users);
+    
+    users.map()
     
     res.send(req.body).status(200);
   }
