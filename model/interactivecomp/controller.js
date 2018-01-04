@@ -4,6 +4,7 @@ const getSemester = require('../../lib/tools').getSemester;
 const Controller = require('../../lib/controller');
 const ExamFacade = require('../exam/facade');
 const MeetingFacade = require('../meeting/facade');
+const UserFacade = require('../user/facade');
 
 class InteractivecompController extends Controller {
   saveExam(req, res, next) {
@@ -147,10 +148,21 @@ class InteractivecompController extends Controller {
   async bookExam(req, res, next) {
 
     const payload = JSON.parse(req.body.payload);
+    const buttonValue = payload.actions[0].value.split(':');
+
     const userId = payload.user.id;
-    const meetingId = payload.actions[0].value;
+    const username = payload.user.name;
+    const meetingId = buttonValue[0];
+    const examId = buttonValue[1];
+
     const meeting = await MeetingFacade.findById(meetingId);
     const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
+
+    UserFacade.update(
+      { username },
+      { $addToSet: { exams: examId } },
+      { upsert: true }
+    );
 
     axios({
       method: 'post',
