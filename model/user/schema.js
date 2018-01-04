@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-
 const userSchema = new Schema({
-  title: { type: String, required: true },
-  body: { type: String }
+  username: { type: String, required: true },
+  exams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exam' }],
+  results: [{ type: Boolean }]
 });
 
 module.exports =  userSchema;
