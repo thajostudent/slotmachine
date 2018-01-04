@@ -6,6 +6,7 @@ var Jenkinsapi = require('jenkins-api');
 var jenkinsapi = Jenkinsapi.init(`http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`);
 const jenkins = require('jenkins')({ baseUrl: `http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`, crumbIssuer: true, promisify: true });
 const { getJob, isValidUrl, createJenkinsConfigFile } = require('../../lib/helpers/repo');
+const axios = require('axios')
 
 class MeetingController extends Controller {
 
@@ -47,12 +48,12 @@ class MeetingController extends Controller {
                   // Send something the user
                       try {
                         const response = await axios({
-            method: 'post',
-        url: 'https://slack.com/api/users.info',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
+                        method: 'post',
+                        url: 'https://slack.com/api/users.info',
+                        headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                        },
         data: `user=${req.body.user_id}`
       });
                   
