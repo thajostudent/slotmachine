@@ -1,6 +1,11 @@
-const Controller = require('../../lib/controller');
-const courseFacade = require('./facade');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-class CourseController extends Controller {}
 
-module.exports = new CourseController(courseFacade);
+const courseSchema = new Schema({
+  title: { type: String, required: true },
+  channelid: {type: String, required: true},
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+});
+
+module.exports =  courseSchema;
