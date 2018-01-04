@@ -35,7 +35,7 @@ class ExamController extends Controller {
                 text: 'Book',
                 type: 'button',
                 style: 'primary',
-                value: 'test',
+                value: meeting._id,
                 confirm: {
                   title: 'Are you sure?',
                   ok_text: 'Yes',
