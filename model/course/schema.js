@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 
 const courseSchema = new Schema({
   title: { type: String, required: true },
-  courseinstances: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Courseinstance' }]
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
-
 
 module.exports =  courseSchema;
