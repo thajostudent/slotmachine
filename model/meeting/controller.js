@@ -35,9 +35,12 @@ class MeetingController extends Controller {
         // 
         else if (req.body.url) {
             const jobObj = getJob(req.body.url);
-            jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
-                if (err) { console.log("getJobDataError"); }
-                console.log("failCount", data.failCount);
+             const jenkinsData = await jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
+                if (err) { 
+                  console.log("getJobDataError"); 
+                }
+                
+              console.log("failCount", data.failCount);
                 
                 if(data.failCount === 0){
                   try{
