@@ -31,7 +31,7 @@ class ExamController extends Controller {
             callback_id: 'bookExam',
             actions: [
               {
-                name: 'book',
+                name: 'bookExam',
                 text: 'Book',
                 type: 'button',
                 style: 'primary',
