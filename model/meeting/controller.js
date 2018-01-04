@@ -37,7 +37,8 @@ class MeetingController extends Controller {
             const jobObj = getJob(req.body.url);
             jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
                 if (err) { console.log("getJobDataError"); }
-                console.log(data);
+                console.log("failCount", data.failCount);
+                
                 if(data.failCount === 0){
                 const user = userFacade.findOne({username:jobObj.name})
                 const course = courseFacade.findOne({title:'0dv000'})
