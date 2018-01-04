@@ -13,12 +13,10 @@ class UserController extends Controller {
       userFacade.create({username:user})
     })
     
-    Promise.all(promises).then()
-    
-    res.send(req.body).status(200);
-  }
-  
-  
+    Promise.all(promises).then(() =>{
+      res.send(req.body).status(200);
+    })
+  } 
 }
 
 module.exports = new UserController(userFacade);
