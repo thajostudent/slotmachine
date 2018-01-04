@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const examResultSchema = new Schema({
-  title: { type: String, required: true },
-  body: { type: String }
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+  exams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exam', required: true }]
 });
 
 
