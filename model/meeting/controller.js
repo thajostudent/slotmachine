@@ -38,7 +38,9 @@ class MeetingController extends Controller {
             jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
                 if (err) { console.log("getJobDataError"); }
                 console.log(data);
-          
+                if(data.failcount === 0){
+                
+                }
             });
         }
     }
