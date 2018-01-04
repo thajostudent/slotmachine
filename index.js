@@ -8,6 +8,8 @@ const bluebird   = require('bluebird');
 const config = require('./config');
 const routes = require('./routes');
 
+require('dotenv').config();
+
 const app  = express();
 
 mongoose.Promise = bluebird;

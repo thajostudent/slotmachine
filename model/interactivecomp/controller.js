@@ -1,4 +1,5 @@
 const moment = require('moment');
+const axios = require('axios');
 const getSemester = require('../../lib/tools').getSemester;
 const Controller = require('../../lib/controller');
 const ExamFacade = require('../exam/facade');
@@ -16,6 +17,9 @@ class InteractivecompController extends Controller {
       },
       channel: {
         name
+      },
+      user: {
+        id
       }
     } = JSON.parse(req.body.payload);
     const errors = [];
@@ -93,9 +97,17 @@ class InteractivecompController extends Controller {
       firstMeetingMoment.minute(moment(firstMeeting, 'HH.mm').minute());
 
       // Create a meeting for each meeting
-      for (let i = 0; i < numMeetings; i += meetingLength) {
+      for (let i = 0; i < numMeetings; i += 1) {
         const startTime = moment(firstMeetingMoment);
-        startTime.add(i, 'hour');
+        startTime.add(i * meetingLength, 'hour');
+
+        if (lunchBreak && startTime.hour() === lunchBreakStart.hour()) {
+          startTime.hour(lunchBreakEnd.hour());
+          startTime.minute(lunchBreakEnd.minute());
+          numMeetings += 1;
+          i += 1;
+        }
+
         const endTime = moment(startTime);
         endTime.add(meetingLength, 'hour');
         meetingPromises.push(MeetingFacade.create({
@@ -109,6 +121,18 @@ class InteractivecompController extends Controller {
         // doc.meetings.push(docs[0]._id)
         doc.save();
         // Respond to teacher
+
+        axios({
+          method: 'post',
+          url: 'https://slack.com/api/chat.postEphemeral',
+          headers: {
+            Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          data: `user=${id}&text=Exam - ${examName} created with ${numMeetings} meetings&channel=${name}`
+        })
+        .catch(err => console.log(err));
+
         return res.send();
 
         // respond using slack API: text: `Exam - ${examName} created with ${numMeetings} meetings`

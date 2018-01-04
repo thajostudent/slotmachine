@@ -54,8 +54,6 @@ class ExamController extends Controller {
   }
 
   async createExam(req, res, next) {
-    // INSERT TOKEN HERE!!!!
-    const token = 'xoxp-276024342966-275197782676-291958675863-87c9d74ceeb570c2b0190493d73f8956';
     const trigger = req.body.trigger_id;
 
     try {
@@ -63,7 +61,7 @@ class ExamController extends Controller {
         method: 'post',
         url: 'https://slack.com/api/users.info',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         data: `user=${req.body.user_id}`
@@ -116,7 +114,7 @@ class ExamController extends Controller {
     };
 
     axios({
-      url: `https://www.slack.com/api/dialog.open?token=${token}&trigger_id=${trigger}`,
+      url: `https://www.slack.com/api/dialog.open?token=${process.env.SLACK_API_TOKEN}&trigger_id=${trigger}`,
       data: `dialog=${encodeURIComponent(JSON.stringify(data))}`,
       method: 'post',
       headers: {
@@ -130,116 +128,6 @@ class ExamController extends Controller {
     .catch(err => res.send('Sorry, something went wrong.'));
   }
 
-  saveExam(req, res, next) {
-    const {
-      examName,
-      examDate,
-      meetings,
-      firstMeeting,
-      lunchBreak
-    } = JSON.parse(req.body.payload).submission;
-    const errors = [];
-    let lunchBreakStart = null;
-    let lunchBreakEnd = null;
-
-    if (lunchBreak) {
-      lunchBreakStart = moment(lunchBreak.split('-')[0], 'HH.mm');
-      lunchBreakEnd = moment(lunchBreak.split('-')[1], 'HH.mm');
-    }
-
-    // Meeting string error validation
-    let meetingError = false;
-    const meetingSplit = meetings.split('/');
-    if (meetingSplit.length !== 2) {
-      meetingError = true;
-    } else {
-      const numMeetings = parseInt(meetingSplit[0], 10);
-      const meetingLength = parseInt(meetingSplit[1], 10);
-
-      if (isNaN(numMeetings) || isNaN(meetingLength)) {
-        meetingError = true;
-      }
-    }
-
-    if (meetingError) {
-      errors.push({
-        name: 'meetings',
-        error: 'Please enter no. of meetings/length in the format 8/1'
-      });
-    }
-
-    if (!moment(examDate, 'DD/MM').isValid()) {
-      errors.push({
-        name: 'examDate',
-        error: 'Please enter a valid date in DD/MM format.'
-      });
-    }
-
-    if (!moment(firstMeeting, 'HH.mm').isValid()) {
-      errors.push({
-        name: 'firstMeeting',
-        error: 'Please enter a valid time in HH.mm format.'
-      });
-    }
-
-    if (lunchBreak && (!lunchBreakStart.isValid() || !lunchBreakEnd.isValid())) {
-      errors.push({
-        name: 'lunchBreak',
-        error: 'Please enter valid times in HH:mm format separated by -'
-      });
-    } else if (lunchBreak && lunchBreakStart > lunchBreakEnd) {
-      errors.push({
-        name: 'lunchBreak',
-        error: 'Lunch break cannot end before it begins.'
-      });
-    }
-
-    if (errors.length !== 0) {
-      return res.json({ errors });
-    }
-    return res.send();
-  }
-
-  registerExam(req, res, next) {
-    // /createExam Exam-1 31/12 noOfMeetings Length
-    
-    // /createexam Exam1 25/11 8 1
-    // one day exam, max 8 1 hour meetings
-    this.facade.remove({}, function(err) { 
-   console.log('collection removed') 
-    });
-    const bodyObj = createExamToObject(req.body.text);
-
-    // Create the exam
-    this.facade.create({
-      course: req.body.channel_name + bodyObj.semester,
-      name: bodyObj.name,
-      attempt: 1
-    }).then((doc) => {
-      const meetingPromises = [];
-
-      // Create a meeting for each meeting, time needs fixing...
-      for (let i = 0; i < bodyObj.meetings; i += 1) {
-        var date = new Date();
-        date = bodyObj.date.setHours(bodyObj.date.getHours() + 1)
-        meetingPromises.push(meetingFacade.create({
-          startTime: date,
-          endTime: date
-        }));
-      }
-      Promise.all(meetingPromises).then((docs) => {
-        // Add meetings to exam and save
-        doc.meetings = docs;
-        // doc.meetings.push(docs[0]._id)
-        doc.save();
-        // Respond to teacher
-        res.send({
-          text: `Exam - ${bodyObj.name} created with ${bodyObj.meetings} meetings`
-        });
-      });
-    });
-  }
-  
   create(req, res, next){
     console.log(req.body.text);
   }
