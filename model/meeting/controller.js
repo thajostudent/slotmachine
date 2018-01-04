@@ -36,21 +36,15 @@ class MeetingController extends Controller {
         else if (req.body.url) {
             const jobObj = getJob(req.body.url);
              const jenkinsData = await jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
-                if (err) { 
-                  console.log("getJobDataError"); 
-                }
-                
-              console.log("failCount", data.failCount);
-                
-                if(data.failCount === 0){
-                  try{
+              if(data.failCount === 0){
+                  
                   await userFacade.findOne({username:jobObj.name});
                   await courseFacade.findOne({title:'0dv000'})
                   console.log(user)
                   console.log(course)
                   course.users.push(user);
                   course.save();
-                  }
+                  
                   
                 }
             });
