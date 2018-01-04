@@ -40,8 +40,8 @@ class MeetingController extends Controller {
                 console.log(data);
                 if(data.failcount === 0){
                 const user = userFacade.findOne({username:jobObj.name})
-                const course = courseFac
-                  
+                const course = courseFacade.findOne({title:'0dv000'})
+                course.users.push(user)
                 }
             });
         }
