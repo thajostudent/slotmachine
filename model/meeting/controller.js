@@ -39,7 +39,8 @@ class MeetingController extends Controller {
                 if (err) { console.log("getJobDataError"); }
                 console.log(data);
                 if(data.failcount === 0){
-                const user = await user.findOne({username:jobObj.name});
+                const user = userFacade.findOne({username:jobObj.name})
+                const course = courseFac
                   
                 }
             });
