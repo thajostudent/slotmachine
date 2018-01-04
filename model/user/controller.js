@@ -8,7 +8,7 @@ class UserController extends Controller {
     
     axios.post('https://slack.com/api/users.info', {
     user: '',
-    token: ''
+    token: process.env.SLOT
   })
   .then(function (response) {
     console.log(response);
