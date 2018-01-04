@@ -21,7 +21,7 @@ class UserController extends Controller {
   } 
 }
 
-async apiTest(req, res, next) {
+  async apiTest(req, res, next) {
         // Setting up jenkins job on webhook creation
         if (req.body.hook) {
             console.log("Setting up job on jenkins");
