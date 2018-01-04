@@ -45,6 +45,16 @@ class MeetingController extends Controller {
                   course.users.push(user);
                   await course.save();
                   // Send something the user
+                      try {
+                        const response = await axios({
+            method: 'post',
+        url: 'https://slack.com/api/users.info',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: `user=${req.body.user_id}`
+      });
                   
                 }
             });
