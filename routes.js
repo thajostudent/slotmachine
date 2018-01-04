@@ -16,5 +16,6 @@ router.use('/users', user);
 router.use('/meetings', meeting);
 router.use('/repos', repo);
 router.use('/interactivecomp', interactivecomp)
+router.use('/courses', course)
 
 module.exports = router;
