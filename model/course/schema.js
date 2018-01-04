@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const courseSchema = new Schema({
   title: { type: String, required: true },
-  coursei: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meeting' }]
+  courseinstances: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meeting' }]
 });
 
 
