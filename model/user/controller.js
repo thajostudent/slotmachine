@@ -17,7 +17,7 @@ class UserController extends Controller {
     console.log(channel);
     
     const promises = users.map((user)=>{
-      userFacade.create({username:channel + "/" + user})
+      userFacade.create({username:user})
     })
     
     Promise.all(promises).then(() =>{
