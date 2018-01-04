@@ -53,12 +53,32 @@ class ExamController extends Controller {
     });
   }
 
-  createExam(req, res, next) {
+  async createExam(req, res, next) {
     // INSERT TOKEN HERE!!!!
-    const token = '';
+    const token = 'xoxp-276024342966-275197782676-291958675863-87c9d74ceeb570c2b0190493d73f8956';
     const trigger = req.body.trigger_id;
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://slack.com/api/users.info',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: `user=${req.body.user_id}`
+      });
+
+      if (!response.data.user.is_admin) {
+        return res.send('Not authorized');
+      }
+    } catch (e) {
+      console.log(e);
+      return res.send('Sorry, something went wrong.');
+    }
+
     const data = {
-      callback_id: '12345',
+      callback_id: 'createExam',
       title: 'Create exam',
       elements: [
         {
