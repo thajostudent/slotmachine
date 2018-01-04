@@ -6,7 +6,7 @@ class UserController extends Controller {
   create(req, res, next) {
     
     console.log(req.body.text);
-    
+    createUserArray()
     
     res.send(req.body).status(200);
   }
