@@ -15,6 +15,12 @@ class ExamFacade extends Facade {
       .populate('meetings')
       .exec();
   }
+  
+    remove(...args) {
+    return this.model
+      .remove(...args)
+      .exec();
+  }
 }
 
 module.exports = new ExamFacade('Exam', examSchema);

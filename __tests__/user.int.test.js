@@ -3,7 +3,7 @@ const request = require('supertest');
 
 describe('Test the user path', () => {
   test('It should response the GET method', () => {
-    return request(app).get('/user').then(response => {
+    return request(app).get('/users').then(response => {
       expect(response.statusCode).toBe(200);
     });
   });
