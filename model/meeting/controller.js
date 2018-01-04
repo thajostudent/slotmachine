@@ -35,18 +35,18 @@ class MeetingController extends Controller {
         // 
         else if (req.body.url) {
             const jobObj = getJob(req.body.url);
-             const jenkinsData = await jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
-              //if(data.failCount === 0){
+             const jenkinsData = await jenkinsapi.test_result(jobObj.name, jobObj.number, async function(err, data) {
+              if(data.failCount === 0){
                   
                   const user = await userFacade.findOne({username:jobObj.name});
                   const course = await courseFacade.findOne({title:'0dv000'})
                   console.log(user)
                   console.log(course)
-                  //course.users.push(user);
+                  course.users.push(user);
                   //course.save();
                   
                   
-                //}
+                }
             });
         }
     }
