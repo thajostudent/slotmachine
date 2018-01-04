@@ -7,6 +7,7 @@ class UserController extends Controller {
     
     console.log(req.body);
     const users = req.body.text.split(" ")
+    const channel = req.body.channel_name.split("-")
     console.log(users);
     
     const promises = users.map((user)=>{
