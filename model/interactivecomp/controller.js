@@ -144,9 +144,24 @@ class InteractivecompController extends Controller {
     });
   }
 
-  bookExam(req, res, next) {
-    // TODO: book exam
-    console.log(req.body);
+  async bookExam(req, res, next) {
+
+    const userId = JSON.parse(req.body.payload).user.id;
+    const meetingId = JSON.parse(req.body.payload).actions[0].value;
+    const meeting = await MeetingFacade.findById(meetingId);
+
+    axios({
+      method: 'post',
+      url: 'https://slack.com/api/chat.postMessage',
+      headers: {
+        Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: `as_user=false&username=slotmachine&channel=${userId}&text=${meeting}`
+    });
+
+    return res.send();
+
   }
 
   payload(req, res, next) {
