@@ -150,6 +150,7 @@ class InteractivecompController extends Controller {
     const userId = payload.user.id;
     const meetingId = payload.actions[0].value;
     const meeting = await MeetingFacade.findById(meetingId);
+    const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
 
     axios({
       method: 'post',
@@ -158,7 +159,7 @@ class InteractivecompController extends Controller {
         Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      data: `as_user=false&username=slotmachine&channel=${userId}&text=${meeting}`
+      data: `as_user=false&username=slotmachine&channel=${userId}&text=${response}`
     });
 
     return res.send();
