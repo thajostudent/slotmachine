@@ -57,7 +57,7 @@ class MeetingController extends Controller {
                           data: `user=${req.body.user_id}`
                         });
                       } catch(e){
-                        console.log()
+                        console.log(e);
                       }
                   
                 }
