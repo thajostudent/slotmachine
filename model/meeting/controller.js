@@ -43,21 +43,7 @@ class MeetingController extends Controller {
                   const course = await courseFacade.findOne({title:'0dv000'})                  
                   course.users.push(user);
                   await course.save();
-                  // Send something the user
-                      try {
-                        const response = await axios({
-                        method: 'post',
-                        url: 'https://slack.com/api/users.list',
-                        headers: {
-                        Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                        }});
-                        
-                        console.log(response);
-                      } catch(e){
-                        console.log(e);
-                      }
-                  
+                  // Send something the user                  
                 }
             });
         }
