@@ -16,7 +16,7 @@ class MeetingController extends Controller {
             console.log("Setting up job on jenkins");
             try {
                 const jenkinsConfigXML = await createJenkinsConfigFile({ scmUrl: "https://github.com/" + req.body.repository.full_name });
-                
+
                 await jenkins.job.create(req.body.repository.full_name.replace("/", "_"), jenkinsConfigXML);
             }
             catch (e) {
@@ -39,16 +39,24 @@ class MeetingController extends Controller {
             console.log(req.body.url);
             const jobObj = getJob(req.body.url);
             console.log(jobObj);
+            // Get the test results from the jenkins server
             jenkinsapi.test_result(jobObj.org + "_" + jobObj.name, jobObj.number, async function(err, data) {
                 if (err) { console.log(err) }
-                console.log(data);
                 if (data.failCount === 0) {
                     const user = await userFacade.findOne({ username: jobObj.name.split("-")[0] });
-                    // TODO: Fix hardcoded value
-                    const course = await courseFacade.findOne({ title: '0dv000' });
-                   course.users.push(user);
+                    const course = await courseFacade.findOne({ title: jobObj.org });
+                    course.users.push(user);
                     await course.save();
-                    // Send something the user                  
+                    // Send something the user
+                    console.log(course.channelid);
+                    // get user id from user name
+                    const memberId = await getSlackUserId(jobObj.name.split("-")[0])
+
+
+
+                    console.log("memberid", memberId);
+                    // post message to user
+                    postResultToUser(memberId, course.channelid)
                 }
             });
         }
@@ -56,3 +64,48 @@ class MeetingController extends Controller {
 }
 
 module.exports = new MeetingController(meetingFacade);
+
+const getSlackUserId = async(username) => {
+    try {
+        const response = await axios({
+            method: 'post',
+            url: 'https://slack.com/api/users.list',
+            headers: {
+                Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        let memberId;
+        for (let i = 0; i < response.data.members.length; i += 1) {
+            if (response.data.members[i].profile.display_name === username) {
+                memberId = response.data.members[i].id;
+                break;
+            }
+        }
+        return memberId;
+    }
+    catch (e) {
+        console.log(e.message);
+    }
+
+
+};
+
+const postResultToUser = async(userid, channelid) => {
+
+    console.log("channelid", channelid);
+    console.log("userid", userid);
+    try {
+        await axios({
+            method: 'post',
+            url: 'https://slack.com/api/chat.postEphemeral',
+            headers: {
+                Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            data: { user: userid, text: "You tests have gone trough and you are now able to book an exam", channel: channelid }
+        });
+    }
+    catch (e) { console.log(e.message); }
+};
