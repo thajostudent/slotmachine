@@ -160,12 +160,14 @@ class InteractivecompController extends Controller {
 
     const user = await UserFacade.findOne({ username });
 
-    // TODO: check why code runs after this return
+    // Check if exam is already booked
+    let responseMessage;
     user.exams.forEach((exam) => {
       if (exam.equals(examId)) {
-        return res.send('Exam already booked');
+        responseMessage = 'Exam already booked';
       }
     });
+    if (responseMessage) return res.send(responseMessage);
 
     UserFacade.update(
       { username },
