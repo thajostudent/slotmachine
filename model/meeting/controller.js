@@ -1,9 +1,12 @@
 const Controller = require('../../lib/controller');
 const meetingFacade = require('./facade');
+const userFacade = require('../user/facade');
+const courseFacade = require('../course/facade');
 var Jenkinsapi = require('jenkins-api');
 var jenkinsapi = Jenkinsapi.init(`http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`);
 const jenkins = require('jenkins')({ baseUrl: `http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`, crumbIssuer: true, promisify: true });
 const { getJob, isValidUrl, createJenkinsConfigFile } = require('../../lib/helpers/repo');
+const axios = require('axios')
 
 class MeetingController extends Controller {
 
@@ -33,9 +36,16 @@ class MeetingController extends Controller {
         // 
         else if (req.body.url) {
             const jobObj = getJob(req.body.url);
-            jenkinsapi.test_result(jobObj.name, jobObj.number, function(err, data) {
-                if (err) { console.log("getJobDataError"); }
-                console.log(data);
+            jenkinsapi.test_result(jobObj.name, jobObj.number, async function(err, data) {
+                if (err) { console.log(err) }
+                if (data.failCount === 0) {
+                    const user = await userFacade.findOne({ username: jobObj.name.split("-")[0] });
+                    // TODO: Fix hardcoded value
+                    const course = await courseFacade.findOne({ title: '0dv000' });
+                    course.users.push(user);
+                    await course.save();
+                    // Send something the user                  
+                }
             });
         }
     }
