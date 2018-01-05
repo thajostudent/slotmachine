@@ -5,7 +5,6 @@ class CourseController extends Controller {
   async create(req, res, next) {
     //Check if course channel and pick of course name
     //Check that admin
-    console.log(req.body);
     try {
       await courseFacade.create({ title: req.body.channel_name, channelid: req.body.channel_id })
       return res.send({

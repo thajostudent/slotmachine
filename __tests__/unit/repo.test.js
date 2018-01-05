@@ -1,7 +1,7 @@
 /* global expect */
 
 const fs = require('fs');
-const {isValidUrl, getRepoName } = require('../../lib/helpers/repo')
+const {isValidUrl, getRepoName, getOrgAndRepo } = require('../../lib/helpers/repo')
 const XMLStringToObject = require('../../lib/tools').XMLStringToObject;
 
 const testXML = fs.readFileSync('lib/test/config.xml');
@@ -38,5 +38,22 @@ describe('isValidUrl', () => {
   ));
   it('return false on bad URL', () => (
     expect(isValidUrl(badUrl)).toBeFalsy()
+  ));
+});
+
+const getOrgAndRepoInput = "https://github.com/0dv000/xx00xx-exam-1"
+const getOrgAndRepoOutput = "0dv000/xx00xx-exam-1"
+
+
+describe('getOrgAndRepo', () => {
+  it('returns correct string', () => (
+    expect(getOrgAndRepo(getOrgAndRepoInput)).toMatch(getOrgAndRepoOutput)
+  ));
+});
+
+
+describe('getRepo', () => {
+  it('returns correct string', () => (
+    expect(getOrgAndRepo(getOrgAndRepoInput)).toMatch("xx00xx-exam-1")
   ));
 });
