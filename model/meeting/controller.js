@@ -16,7 +16,8 @@ class MeetingController extends Controller {
             console.log("Setting up job on jenkins");
             try {
                 const jenkinsConfigXML = await createJenkinsConfigFile({ scmUrl: "https://github.com/" + req.body.repository.full_name });
-                await jenkins.job.create(req.body.repository.name, jenkinsConfigXML);
+                
+                await jenkins.job.create(req.body.repository.full_name.replace("/", "_"), jenkinsConfigXML);
             }
             catch (e) {
                 console.log(e);
@@ -35,14 +36,17 @@ class MeetingController extends Controller {
         }
         // 
         else if (req.body.url) {
+            console.log(req.body.url);
             const jobObj = getJob(req.body.url);
-            jenkinsapi.test_result(jobObj.name, jobObj.number, async function(err, data) {
+            console.log(jobObj);
+            jenkinsapi.test_result(jobObj.org + "_" + jobObj.name, jobObj.number, async function(err, data) {
                 if (err) { console.log(err) }
+                console.log(data);
                 if (data.failCount === 0) {
                     const user = await userFacade.findOne({ username: jobObj.name.split("-")[0] });
                     // TODO: Fix hardcoded value
                     const course = await courseFacade.findOne({ title: '0dv000' });
-                    course.users.push(user);
+                   course.users.push(user);
                     await course.save();
                     // Send something the user                  
                 }
