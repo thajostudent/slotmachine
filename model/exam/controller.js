@@ -146,6 +146,12 @@ class ExamController extends Controller {
             callback_id: 'listExams',
             actions: [
               {
+                name: 'showExam',
+                text: 'Show',
+                type: 'button',
+                value: `${exam.course}`
+              },
+              {
                 name: 'deleteExam',
                 text: 'Delete',
                 type: 'button',
