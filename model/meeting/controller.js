@@ -26,7 +26,6 @@ class MeetingController extends Controller {
         // Starting buildjob on webhook release event
         else if (req.body.action === "published" && req.body.release.target_commitish === "master") {
             console.log("Starting buildjob");
-            console.log("body:\n",req.body);
             try {
                 await jenkins.job.build(req.body.repository.full_name.replace("/", "_"));
             }
@@ -37,9 +36,7 @@ class MeetingController extends Controller {
         }
         // Receives tests results data and sends a message to the student if they passed
         else if (req.body.url) {
-            console.log(req.body.url);
             const jobObj = getJob(req.body.url);
-            console.log(jobObj);
             // Get the test results from the jenkins server
             jenkinsapi.test_result(jobObj.org + "_" + jobObj.name, jobObj.number, async function(err, data) {
                 if (err) { console.log(err) }
@@ -56,7 +53,17 @@ class MeetingController extends Controller {
                 } else {
                     const course = await courseFacade.findOne({ title: jobObj.org });
                     const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
-                    postMessageToSlackUser(memberId, course.channelid, `${data.failCount} tests failed, no cookie for you!`);
+                    let fails = '';
+                    
+                    for(var i = 0; i < data.suites.length; i++) {
+                      for(var j = 0; j < data.suites[i].cases.length; j++) {
+                          
+                          if(data.suites[i].cases[j].status === 'FAILED'){
+                              fails += ':o:' + data.suites[i].cases[j].name +` \n`
+                          }
+                      }
+                    }
+                    postMessageToSlackUser(memberId, course.channelid, `${data.failCount} tests failed, no cookie for you! \n` + ` *You need to fix, to get the cookie:*\n ${fails}`);
                 }
             });
         }
