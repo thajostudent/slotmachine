@@ -10,6 +10,9 @@ router.route('/')
 router.route('/book')
   .post((...args) => controller.bookExam(...args));
 
+router.route('/list')
+  .post((...args) => controller.listExams(...args));
+
 router.route('/:id')
   .put((...args) => controller.update(...args))
   .get((...args) => controller.findById(...args))
