@@ -128,6 +128,46 @@ class ExamController extends Controller {
     .catch(err => res.send('Sorry, something went wrong.'));
   }
 
+  listExams(req, res, next) {
+    return this.facade.find().then((exams) => {
+      if (!exams) {
+        return res.send({
+          text: 'Sorry, no exams found.'
+        });
+      }
+
+      return res.send({
+        text: 'All exams:',
+        attachments: exams.map((exam, index) => (
+          {
+            title: `Exam: ${exam.name}`,
+            title_link: 'https://www.google.com',
+            text: `Course: ${exam.course}`,
+            callback_id: 'listExams',
+            actions: [
+              {
+                name: 'deleteExam',
+                text: 'Delete',
+                type: 'button',
+                style: 'danger',
+                value: `${exam.course}`,
+                confirm: {
+                  title: 'Are you sure?',
+                  ok_text: 'Yes',
+                  dismiss_text: 'No'
+                }
+              }
+            ]
+          }
+        ))
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.send({ text: 'Sorry, something went wrong.' });
+    });
+  }
+
   create(req, res, next){
     console.log(req.body.text);
   }
