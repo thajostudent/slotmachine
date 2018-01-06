@@ -50,20 +50,14 @@ class MeetingController extends Controller {
                     const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
                     // post message to user that they can book an exam
                     postMessageToSlackUser(memberId, course.channelid, "You tests have gone trough and you are now able to book an exam");
-                } else {
+                }
+                else {
                     const course = await courseFacade.findOne({ title: jobObj.org });
                     const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
-                    let fails = '';
+                    //return all failed testcases in string
+                    const fails = getTestCases(data);
                     
-                    for(var i = 0; i < data.suites.length; i++) {
-                      for(var j = 0; j < data.suites[i].cases.length; j++) {
-                          
-                          if(data.suites[i].cases[j].status === 'FAILED'){
-                              fails += ':o:' + data.suites[i].cases[j].name +` \n`
-                          }
-                      }
-                    }
-                    postMessageToSlackUser(memberId, course.channelid, `${data.failCount} tests failed, no cookie for you! \n` + ` *You need to fix, to get the cookie:*\n ${fails}`);
+                    postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n *${data.failCount} tests failed, no cookie for you!* \n` + ` *You need to fix, to get the cookie:*\n ${fails}`);
                 }
             });
         }
@@ -71,6 +65,19 @@ class MeetingController extends Controller {
 }
 
 module.exports = new MeetingController(meetingFacade);
+
+const getTestCases = (data) => {
+    let fails = '';
+    for (var i = 0; i < data.suites.length; i++) {
+        for (var j = 0; j < data.suites[i].cases.length; j++) {
+
+            if (data.suites[i].cases[j].status === 'FAILED') {
+                fails += ':o: ' + data.suites[i].cases[j].name + ` \n`;
+            }
+        }
+    }
+    return fails;
+}
 
 const getSlackUserId = async(username) => {
     try {
