@@ -98,10 +98,27 @@ jobs:
           command: |
             echo "DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
-            SLACK_API_TOKEN_STAGING: ${SLACK_API_TOKEN_STAGING}" >> devops/environments/staging/host_vars/slotmachine
+            SLACK_API_TOKEN: ${SLACK_API_TOKEN_STAGING}" >> devops/environments/staging/host_vars/slotmachine
       - run: 
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/staging/inventory.yml devops/site.yml
+    
+  deploy:
+    docker:
+      - image: williamyeh/ansible:ubuntu16.04
+    working_directory: ~/tmp
+    steps:
+      - checkout
+      - run:
+          name: Append variables to host_vars file
+          command: |
+            echo "DOCKER_USER: ${DOCKER_USER}
+            DOCKER_PASSWORD: ${DOCKER_PASSWORD}
+            SLACK_API_TOKEN: ${SLACK_API_TOKEN_PRODUCTION}" >> devops/environments/production/host_vars/slotmachine
+      - run: 
+          name: Run Ansible playbook
+          command: ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
+
   
 workflows:
   version: 2
@@ -117,3 +134,13 @@ workflows:
           filters:
             branches:
               only: master
+      - hold:
+          type: approval
+          requires:
+            - integration-tests
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - hold

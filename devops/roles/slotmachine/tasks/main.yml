@@ -21,13 +21,13 @@
 - name: Pull Docker Hub image
   shell: docker pull {{ docker_image }}
 
-- name: Copy docker-compose.staging.yml
+- name: Copy docker-compose file
   template:
-    src: docker-compose.staging.yml.j2
-    dest: "{{ working_directory }}/docker-compose.staging.yml"
+    src: docker-compose.yml
+    dest: "{{ working_directory }}/docker-compose.yml"
 
 - name: Start server containers
-  shell: docker-compose -f docker-compose.staging.yml up -d
+  shell: docker-compose -f docker-compose.yml up -d
   args:
     chdir: "{{ working_directory }}"
 
