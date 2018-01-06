@@ -79,7 +79,8 @@ const getSlackUserId = async(username) => {
         let memberId;
         for (let i = 0; i < response.data.members.length; i += 1) {
             // In production it should be reponse.data.members[i].name === username
-            if (response.data.members[i].profile.display_name === username) {
+            //if (response.data.members[i].name === username) {
+            if (response.data.members[i].profile.display_name.toLowerCase() === username) {
                 memberId = response.data.members[i].id;
                 break;
             }
