@@ -128,7 +128,27 @@ class ExamController extends Controller {
     .catch(err => res.send('Sorry, something went wrong.'));
   }
 
-  listExams(req, res, next) {
+  async listExams(req, res, next) {
+    
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://slack.com/api/users.info',
+        headers: {
+          Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: `user=${req.body.user_id}`
+      });
+
+      if (!response.data.user.is_admin) {
+        return res.send('Not authorized');
+      }
+    } catch (e) {
+      console.log(e);
+      return res.send('Sorry, something went wrong.');
+    }
+
     return this.facade.find().then((exams) => {
       if (!exams) {
         return res.send({
