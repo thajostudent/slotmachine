@@ -129,7 +129,6 @@ class ExamController extends Controller {
   }
 
   async listExams(req, res, next) {
-    
     try {
       const response = await axios({
         method: 'post',
@@ -150,7 +149,7 @@ class ExamController extends Controller {
     }
 
     return this.facade.find().then((exams) => {
-      if (!exams) {
+      if (exams.length === 0) {
         return res.send({
           text: 'Sorry, no exams found.'
         });
