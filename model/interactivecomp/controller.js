@@ -188,12 +188,32 @@ class InteractivecompController extends Controller {
     return res.send();
   }
 
+  listExams(req, res, next) {
+
+    const action = JSON.parse(req.body.payload).actions[0].name;
+    const course = JSON.parse(req.body.payload).actions[0].value;
+
+    switch (action) {
+      case 'showExam':
+        // TODO: send back exam info
+        return res.send();
+      case 'deleteExam':
+        ExamFacade.remove({ course });
+        return res.send(`Exam for ${course} deleted.`);
+      default:
+        break;
+    }
+    res.send();
+  }
+
   payload(req, res, next) {
     switch (JSON.parse(req.body.payload).callback_id) {
       case 'createExam':
         return this.saveExam(req, res, next);
       case 'bookExam':
         return this.bookExam(req, res, next);
+      case 'listExams':
+        return this.listExams(req, res, next);
       default:
         break;
     }
