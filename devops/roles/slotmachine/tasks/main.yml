@@ -23,7 +23,7 @@
 
 - name: Copy docker-compose file
   template:
-    src: docker-compose.yml
+    src: docker-compose.yml.j2
     dest: "{{ working_directory }}/docker-compose.yml"
 
 - name: Start server containers
