@@ -7,6 +7,8 @@ var jenkinsapi = Jenkinsapi.init(`http://${process.env.JENKINS_USERNAME}:${proce
 const jenkins = require('jenkins')({ baseUrl: `http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`, crumbIssuer: true, promisify: true });
 const { getJob, createJenkinsConfigFile } = require('../../lib/helpers/repo');
 const axios = require('axios');
+const getSemester = require('../../lib/tools').getSemester;
+const examFacade = require('../exam/facade');
 
 class MeetingController extends Controller {
 
@@ -37,27 +39,39 @@ class MeetingController extends Controller {
         // Receives tests results data and sends a message to the student if they passed
         else if (req.body.url) {
             const jobObj = getJob(req.body.url);
+            console.log(jobObj);
             // Get the test results from the jenkins server
             jenkinsapi.test_result(jobObj.org + "_" + jobObj.name, jobObj.number, async function(err, data) {
-                if (err) { console.log(err) }
+                if (err) { console.log(err.message) }
                 if (data.failCount === 0) {
-                    const user = await userFacade.findOne({ username: jobObj.name.split("-")[0] });
-                    const course = await courseFacade.findOne({ title: jobObj.org });
-                    course.users.push(user);
-                    await course.save();
-                    // SEND SOMETHING TO THE USER
-                    // get user id from user name
-                    const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
-                    // post message to user that they can book an exam
-                    postMessageToSlackUser(memberId, course.channelid, "You tests have gone trough and you are now able to book an exam");
+                    try {
+                        const user = await userFacade.findOne({ username: jobObj.name.split("-")[0] });
+                        const course = await courseFacade.findOne({ title: jobObj.org });
+                        const exam = await examFacade.findOne({ course: jobObj.org + getSemester(), name: jobObj.exam })
+                        exam.results.push(user)
+                        //course.users.push(user);
+                        await course.save();
+                        await exam.save();
+                        // SEND SOMETHING TO THE USER
+                        // get user id from user name
+                        const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
+                        // post message to user that they can book an exam
+                        postMessageToSlackUser(memberId, course.channelid, "You tests have gone trough and you are now able to book an exam");
+                    }
+                    catch (e) { console.log(e.message); }
                 }
                 else {
-                    const course = await courseFacade.findOne({ title: jobObj.org });
-                    const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
-                    //return all failed testcases in string
-                    const fails = getTestCases(data);
-                    
-                    postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n *${data.failCount} tests failed, no cookie for you!* \n` + ` *You need to fix, to get the cookie:*\n ${fails}`);
+                    try {
+                        const course = await courseFacade.findOne({ title: jobObj.org });
+                        const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
+                        //return all failed testcases in string
+                        const fails = getTestCases(data);
+
+                        postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n *${data.failCount} tests failed, no cookie for you!* \n` + ` *You need to fix, to get the cookie:*\n ${fails}`);
+                    }
+                    catch (e) {
+                        console.log(e.message);
+                    }
                 }
             });
         }
@@ -89,7 +103,6 @@ const getSlackUserId = async(username) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-
         let memberId;
         for (let i = 0; i < response.data.members.length; i += 1) {
             // In production it should be reponse.data.members[i].name === username
