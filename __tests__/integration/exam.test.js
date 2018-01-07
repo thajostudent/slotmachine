@@ -108,3 +108,24 @@ describe('List exams', () => {
       });
   });
 });
+
+describe('Delete exam', () => {
+  it('should reply with name of deleted exam', () => {
+    const requestBody = {
+      actions: [
+        {
+          name: 'deleteExam',
+          value: '2dv611'
+        }
+      ],
+      callback_id: 'listExams'
+    };
+
+    return request(app)
+      .post('/interactivecomp')
+      .send({ payload: JSON.stringify(requestBody) })
+      .then((response) => {
+        expect(response.text).toEqual(`Exam for ${requestBody.actions[0].value} deleted.`);
+      });
+  });
+});
