@@ -126,15 +126,16 @@ const postMessageToSlackUser = async(userid, channelid, message) => {
     console.log("channelid", channelid);
     console.log("userid", userid);
     try {
-        await axios({
+        const response = await axios({
             method: 'post',
             url: 'https://slack.com/api/chat.postEphemeral',
             headers: {
                 Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
                 'Content-Type': 'application/json'
             },
-            data: { user: userid, text: message, channel: channelid }
+            data: { user: userid, text: message, channel: channelid, as_user: false}
         });
+        console.log(response)
     }
     catch (e) { console.log(e.message); }
 };
