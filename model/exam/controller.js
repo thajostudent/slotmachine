@@ -66,7 +66,7 @@ class ExamController extends Controller {
         },
         data: `user=${req.body.user_id}`
       });
-
+      console.log(response.data)
       if (!response.data.user.is_admin) {
         return res.send('Not authorized');
       }
@@ -129,7 +129,7 @@ class ExamController extends Controller {
   }
 
   async listExams(req, res, next) {
-    
+
     try {
       const response = await axios({
         method: 'post',
