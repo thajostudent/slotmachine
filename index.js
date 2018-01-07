@@ -22,8 +22,8 @@ app.use(morgan('tiny'));
 
 app.use('/', routes); // This is a test
 
-app.listen(config.server.port, () => {
+const server = app.listen(config.server.port, () => {
   console.log(`Magic happens on port ${config.server.port}`);
 });
 
-module.exports = app;
+module.exports = server;

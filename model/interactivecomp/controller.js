@@ -160,6 +160,10 @@ class InteractivecompController extends Controller {
 
     const user = await UserFacade.findOne({ username });
 
+    if (!user) {
+      return res.send('Sorry, you don\'t seem to exist in the database.');
+    }
+
     // Check if exam is already booked
     let responseMessage;
     user.exams.forEach((exam) => {

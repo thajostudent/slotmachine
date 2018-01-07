@@ -66,7 +66,7 @@ class ExamController extends Controller {
         },
         data: `user=${req.body.user_id}`
       });
-      console.log(response.data)
+
       if (!response.data.user.is_admin) {
         return res.send('Not authorized');
       }
