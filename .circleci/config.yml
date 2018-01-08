@@ -99,6 +99,7 @@ jobs:
             echo "DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_STAGING}
+            SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_STAGING}
             JENKINS_URL: ${JENKINS_URL}
             JENKINS_USERNAME: ${JENKINS_USERNAME}
             JENKINS_PASSWORD: ${JENKINS_PASSWORD}
@@ -119,7 +120,8 @@ jobs:
           command: |
             echo "DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
-            SLACK_API_TOKEN: ${SLACK_API_TOKEN_PRODUCTION}" >> devops/environments/production/host_vars/slotmachine
+            SLACK_API_TOKEN: ${SLACK_API_TOKEN_PRODUCTION}
+            SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_PRODUCTION}" >> devops/environments/production/host_vars/slotmachine
       - run: 
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
