@@ -99,6 +99,7 @@ jobs:
             echo "DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_STAGING}" >> devops/environments/staging/host_vars/slotmachine
+            GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/staging/host_vars/slotmachine
       - run: 
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/staging/inventory.yml devops/site.yml
