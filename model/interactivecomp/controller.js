@@ -164,14 +164,11 @@ class InteractivecompController extends Controller {
       return res.send('Sorry, you don\'t seem to exist in the database.');
     }
 
-    // ************************************************************************
-    // Check if tests are OK **************************************************
+    // Check if tests are OK
     let passedTestsMessage;
     ExamFacade.findById(examId).then((exam) => {
       exam.results.forEach((passedUserId) => {
-        console.log(passedUserId);
-        console.log(user._id);
-        if (passedUserId.equals(userId)) {
+        if (passedUserId.equals(user._id)) {
           passedTestsMessage = 'Your tests are OK and you are ready to book the exam.';
         }
       });
