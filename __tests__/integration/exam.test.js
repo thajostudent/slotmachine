@@ -1,3 +1,5 @@
+/* global expect, afterAll */
+
 const app = require('../../index');
 const axios = require('axios');
 const mongoose = require('mongoose');
