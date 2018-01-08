@@ -99,6 +99,7 @@ jobs:
             echo "DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_STAGING}
+            GITHUB_WEBHOOK_RES_URL: ${GITHUB_WEBHOOK_RES_URL}
             GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/staging/host_vars/slotmachine
       - run: 
           name: Run Ansible playbook
