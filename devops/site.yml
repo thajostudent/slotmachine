@@ -2,10 +2,10 @@
 - hosts: all
   become: yes
   roles:
-    - common
+    #- common
 
 - hosts: slotmachine
   become: yes
   roles:
-    - docker
+    #- docker
     - slotmachine
