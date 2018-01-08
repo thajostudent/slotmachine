@@ -6,8 +6,8 @@ const { setGitHook } = require('../../lib/gitApiUtils');
 const userFacade = require('../user/facade');
 const courseFacade = require('../course/facade');
 var Jenkinsapi = require('jenkins-api');
-var jenkinsapi = Jenkinsapi.init(`http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`);
-const jenkins = require('jenkins')({ baseUrl: `http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@194.47.174.62:8080`, crumbIssuer: true, promisify: true });
+var jenkinsapi = Jenkinsapi.init(`http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@${process.env.JENKINS_URL}`);
+const jenkins = require('jenkins')({ baseUrl: `http://${process.env.JENKINS_USERNAME}:${process.env.JENKINS_PASSWORD}@${process.env.JENKINS_URL}`, crumbIssuer: true, promisify: true });
 const { getJob, createJenkinsConfigFile, getTestCases, getSlackUserId, postMessageToSlackUser } = require('../../lib/helpers/repo');
 
 const getSemester = require('../../lib/tools').getSemester;
@@ -31,7 +31,7 @@ class RepoController extends Controller {
     console.log(orgAndRepo);
     // Setting the webhook on github
     try {
-      await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, "fredriko83", "https://coinflippers-fredriko83.c9users.io/repos/hooks", ["release"]);
+      await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, "fredriko83", process.env.GITHUB_WEBHOOK_RES_URL, ["release"]);
       return res.send({
         text: `${repoUrl} succesfully added`
       });
@@ -53,6 +53,7 @@ class RepoController extends Controller {
   async hooks(req, res, next) {
         // Setting up jenkins job on webhook creation
         if (req.body.hook) {
+            res.sendStatus(200);
             console.log("Setting up job on jenkins");
             try {
                 const jenkinsConfigXML = await createJenkinsConfigFile({ scmUrl: "https://github.com/" + req.body.repository.full_name });
@@ -66,6 +67,7 @@ class RepoController extends Controller {
         // Starting buildjob on webhook release event
         else if (req.body.action === "published" && req.body.release.target_commitish === "master") {
             console.log("Starting buildjob");
+            res.sendStatus(200);
             try {
                 await jenkins.job.build(req.body.repository.full_name.replace("/", "_"));
             }
@@ -94,7 +96,7 @@ class RepoController extends Controller {
                         // get user id from user name
                         const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
                         // post message to user that they can book an exam
-                        postMessageToSlackUser(memberId, course.channelid, `<@ ${memberId}>\n You tests have gone trough and you are now able to book an exam`);
+                        postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n You tests have gone trough and you are now able to book an exam`);
                     }
                     catch (e) { console.log(e.message); }
                 }
