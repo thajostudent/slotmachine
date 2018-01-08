@@ -13,8 +13,6 @@ const { getJob, createJenkinsConfigFile, getTestCases, getSlackUserId, postMessa
 const getSemester = require('../../lib/tools').getSemester;
 const examFacade = require('../exam/facade');
 
-
-
 class RepoController extends Controller {
   async addRepo(req, res, next) {
     const repoUrl = req.body.text;
