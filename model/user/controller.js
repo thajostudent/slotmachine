@@ -1,6 +1,8 @@
 const axios = require('axios');
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
+const examFacade = require('../exam/facade');
+
 
 class UserController extends Controller {
   async create(req, res, next) {
@@ -48,7 +50,22 @@ class UserController extends Controller {
   }
 
   async getExams(req, res, next) {
-    return res.send('test');
+    console.log(req.body.user_name)
+    userFacade.findOne({ username: req.body.user_name })
+      .then((doc) => {
+        if (!doc.exams) return res.send({ text: 'You don\'t have any booked exams' })
+        console.log(doc.exams);
+        doc.exams.forEach((exam) => {
+          examFacade.findOne({ _id: exam })
+          .then(doc => {
+            console.log(doc)
+          })
+        })
+        return res.send({ text: 'test' });
+      })
+      .catch((error) => (
+        console.log(error)
+      ))
   }
 }
 
