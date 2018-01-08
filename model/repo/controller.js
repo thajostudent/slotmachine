@@ -87,7 +87,10 @@ class RepoController extends Controller {
                         const user = await userFacade.findOne({ username: jobObj.name.split("-")[0] });
                         const course = await courseFacade.findOne({ title: jobObj.org });
                         const exam = await examFacade.findOne({ course: jobObj.org + getSemester(), name: jobObj.exam });  
-                        exam.results.concat(user);
+                        await examFacade.update(
+                          { _id: exam._id },
+                          { results: { $push: user } }
+                        );
                         //course.users.push(user);
                         await course.save();
                         await exam.save();
