@@ -3,12 +3,7 @@ const axios = require('axios');
 
 const Controller = require('../../lib/controller');
 const examFacade = require('./facade');
-const meetingFacade = require('../meeting/facade');
-const {
-  createExamToObject,
-  getSemester
-} = require('../../lib/tools');
-
+const { getSemester } = require('../../lib/tools');
 
 class ExamController extends Controller {
   bookExam(req, res, next) {
@@ -121,7 +116,7 @@ class ExamController extends Controller {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-    .then(resp => {
+    .then((resp) => {
       console.log(resp.data);
       res.send();
     })
@@ -193,7 +188,7 @@ class ExamController extends Controller {
     });
   }
 
-  create(req, res, next){
+  create(req, res, next) {
     console.log(req.body.text);
   }
 }

@@ -14,7 +14,7 @@ class UserController extends Controller {
         },
         data: `user=${req.body.user_id}`
       });
-      
+
       console.log(response);
 
       if (!response.data.user.is_admin) {

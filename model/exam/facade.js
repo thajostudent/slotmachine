@@ -15,8 +15,8 @@ class ExamFacade extends Facade {
       .populate('meetings')
       .exec();
   }
-  
-    remove(...args) {
+
+  remove(...args) {
     return this.model
       .remove(...args)
       .exec();

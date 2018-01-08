@@ -31,15 +31,14 @@ class RepoController extends Controller {
     // Setting the webhook on github
     try {
 
-      await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, "slackapi", process.env.GITHUB_WEBHOOK_RES_URL, ["release"]);
+      await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, 'slackapi', process.env.GITHUB_WEBHOOK_RES_URL, ['release']);
 
       return res.send({
         text: `${repoUrl} succesfully added`
       });
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e);
-      if (e.message.includes("already exists")) {
+      if (e.message.includes('already exists')) {
         return res.send({
           text: `${repoUrl} has already been added`
         });
@@ -54,60 +53,60 @@ class RepoController extends Controller {
     // Setting up jenkins job on webhook creation
     if (req.body.hook) {
       res.sendStatus(200);
-      console.log("Setting up job on jenkins");
+      console.log('Setting up job on jenkins');
       try {
-        const jenkinsConfigXML = await createJenkinsConfigFile({ scmUrl: "https://github.com/" + req.body.repository.full_name });
+        const jenkinsConfigXML = await createJenkinsConfigFile({ scmUrl: `https://github.com/${req.body.repository.full_name}` });
 
-        await jenkins.job.create(req.body.repository.full_name.replace("/", "_"), jenkinsConfigXML);
-      }
-      catch (e) {
+        await jenkins.job.create(req.body.repository.full_name.replace('/', '_'), jenkinsConfigXML);
+      } catch (e) {
         console.log(e.message);
       }
-    }
-    // Starting buildjob on webhook release event
-    else if (req.body.action === "published" && req.body.release.target_commitish === "master") {
-      console.log("Starting buildjob");
+    } else if (req.body.action === 'published' && req.body.release.target_commitish === 'master') {
+      // Starting buildjob on webhook release event
+
+      console.log('Starting buildjob');
       res.sendStatus(200);
       try {
-        await jenkins.job.build(req.body.repository.full_name.replace("/", "_"));
-      }
-      catch (e) {
+        await jenkins.job.build(req.body.repository.full_name.replace('/', '_'));
+      } catch (e) {
         console.log(e.message);
       }
 
-    }
-    // Receives tests results data and sends a message to the student if they passed
-    else if (req.body.url) {
+    } else if (req.body.url) {
+      // Receives tests results data and sends a message to the student if they passed
+
       // Break up to jenkins job url into useable chunks
       const jobObj = getJob(req.body.url);
       // Get the test results from the jenkins server
-      jenkinsapi.test_result(jobObj.org + "_" + jobObj.name, jobObj.number, async function(err, data) {
-        if (err) { console.log(err.message) }
+
+      // eslint-disable-next-line prefer-arrow-callback
+      jenkinsapi.test_result(`${jobObj.org}_${jobObj.name}`, jobObj.number, async function(err, data) {
+        if (err) { console.log(err.message); }
         if (data.failCount === 0) {
           try {
             const user = await userFacade.findOne({ username: jobObj.user });
             const course = await courseFacade.findOne({ title: jobObj.org });
-            const exam = await examFacade.findOne({ course: jobObj.org + getSemester(), name: jobObj.exam });
+            const exam = await examFacade.findOne({
+              course: jobObj.org + getSemester(),
+              name: jobObj.exam
+            });
             await examFacade.update({ _id: exam._id }, { $push: { results: user } });
-            
+
             // get user id from user name
             const memberId = await getSlackUserId(jobObj.user);
             // post message to user that they can book an exam
-            postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n You tests have gone trough and you are now able to book an exam`);
-          }
-          catch (e) { console.log(e.message); }
-        }
-        else {
+            postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n Your tests have gone trough and you are now able to book an exam`);
+          } catch (e) { console.log(e.message); }
+        } else {
           try {
             const course = await courseFacade.findOne({ title: jobObj.org });
             const memberId = await getSlackUserId(jobObj.user);
-            //return all failed testcases in string
-            
+            // return all failed testcases in string
+
             const fails = getTestCases(data);
 
-            postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n *${data.failCount} tests failed, no cookie for you!* \n` + ` *Fix the following to be able to book an exam:*\n ${fails}`);
-          }
-          catch (e) {
+            postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n *${data.failCount} tests failed, no cookie for you!* \n *Fix the following to be able to book an exam:*\n ${fails}`);
+          } catch (e) {
             console.log(e.message);
           }
         }
