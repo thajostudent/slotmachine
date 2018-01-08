@@ -14,7 +14,7 @@ class UserController extends Controller {
         },
         data: `user=${req.body.user_id}`
       });
-      
+
       console.log(response);
 
       if (!response.data.user.is_admin) {
@@ -45,6 +45,10 @@ class UserController extends Controller {
         console.log(e);
         return res.send('Sorry, something went wrong');
       });
+  }
+
+  async getExams(req, res, next) {
+    return res.send('test');
   }
 }
 
