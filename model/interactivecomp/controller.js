@@ -165,15 +165,19 @@ class InteractivecompController extends Controller {
     }
 
     // Check if tests are OK
-    let passedTestsMessage;
-    ExamFacade.findById(examId).then((exam) => {
+    const testsPassed = await ExamFacade.findById(examId).then((exam) => {
+      let passed = false;
       exam.results.forEach((passedUserId) => {
         if (passedUserId.equals(user._id)) {
-          passedTestsMessage = 'Your tests are OK and you are ready to book the exam.';
+          passed = true;
         }
       });
-    });
-    if (!passedTestsMessage) return res.send('Your tests have not passed. Please fix your code before booking.');
+      return passed;
+    }) || false;
+
+    if (!testsPassed) {
+      return res.send('Your tests have not passed. Please fix your code before booking.');
+    }
 
     // Check if exam is already booked
     let responseMessage;
