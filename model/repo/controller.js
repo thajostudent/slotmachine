@@ -31,7 +31,7 @@ class RepoController extends Controller {
     console.log(orgAndRepo);
     // Setting the webhook on github
     try {
-      await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, "fredriko83", "https://coinflippers-fredriko83.c9users.io/repos/hooks", ["release"]);
+      await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, 'fredriko83', 'http://194.47.174.55/repos/hooks', ['release']);
       return res.send({
         text: `${repoUrl} succesfully added`
       });
@@ -46,10 +46,9 @@ class RepoController extends Controller {
       return res.send({
         text: `There was a problem adding ${repoUrl} sorry about that!`
       });
-      
     }
   }
-  
+
   async hooks(req, res, next) {
         // Setting up jenkins job on webhook creation
         if (req.body.hook) {
