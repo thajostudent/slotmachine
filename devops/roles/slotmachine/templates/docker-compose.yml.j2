@@ -20,6 +20,9 @@ services:
       - SLACK_API_TOKEN={{ SLACK_API_TOKEN }}
       - GITHUB_WEBHOOK_RES_URL={{ GITHUB_WEBHOOK_RES_URL }}
       - GITHUB_TOKEN={{ GITHUB_TOKEN }}
+      - JENKINS_URL={{JENKINS_URL}}
+      - JENKINS_USERNAME={{JENKINS_USERNAME}}
+      - JENKINS_PASSWORD={{JENKINS_PASSWORD}}
     command: npm run start
 
   mongo:
