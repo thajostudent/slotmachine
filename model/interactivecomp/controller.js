@@ -159,7 +159,7 @@ class InteractivecompController extends Controller {
     const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
 
     const user = await UserFacade.findOne({ username });
-
+    console.log(username)
     if (!user) {
       return res.send('Sorry, you don\'t seem to exist in the database.');
     }
