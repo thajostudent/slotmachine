@@ -164,6 +164,21 @@ class InteractivecompController extends Controller {
       return res.send('Sorry, you don\'t seem to exist in the database.');
     }
 
+    // Check if tests are OK
+    const testsPassed = await ExamFacade.findById(examId).then((exam) => {
+      let passed = false;
+      exam.results.forEach((passedUserId) => {
+        if (passedUserId.equals(user._id)) {
+          passed = true;
+        }
+      });
+      return passed;
+    }) || false;
+
+    if (!testsPassed) {
+      return res.send('Your tests have not passed. Please fix your code before booking.');
+    }
+
     // Check if exam is already booked
     let responseMessage;
     user.exams.forEach((exam) => {

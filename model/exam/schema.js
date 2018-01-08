@@ -5,7 +5,8 @@ const examSchema = new Schema({
   course: { type: String, required: true },
   name: { type: String },
   attempt: { type: Number },
-  meetings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meeting' }]
+  meetings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meeting' }],
+  results: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 
 });
 

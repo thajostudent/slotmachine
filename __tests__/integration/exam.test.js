@@ -1,3 +1,5 @@
+/* global expect, afterAll */
+
 const app = require('../../index');
 const axios = require('axios');
 const mongoose = require('mongoose');
@@ -6,6 +8,8 @@ const mockingoose = require('mockingoose').default;
 const request = require('supertest');
 
 const mock = new MockAdapter(axios);
+
+jest.mock('../../lib/middleware/checkSlackToken');
 
 afterEach(() => {
   mock.reset();
@@ -105,6 +109,27 @@ describe('List exams', () => {
       .then((response) => {
         expect(response.body.text).toEqual('All exams:');
         expect(response.body.attachments.length).toEqual(2);
+      });
+  });
+});
+
+describe('Delete exam', () => {
+  it('should reply with name of deleted exam', () => {
+    const requestBody = {
+      actions: [
+        {
+          name: 'deleteExam',
+          value: '2dv611'
+        }
+      ],
+      callback_id: 'listExams'
+    };
+
+    return request(app)
+      .post('/interactivecomp')
+      .send({ payload: JSON.stringify(requestBody) })
+      .then((response) => {
+        expect(response.text).toEqual(`Exam for ${requestBody.actions[0].value} deleted.`);
       });
   });
 });
