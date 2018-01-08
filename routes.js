@@ -8,15 +8,17 @@ const repo = require('./model/repo/router');
 const interactivecomp = require('./model/interactivecomp/router');
 const course = require('./model/course/router');
 
+const checkSlackToken = require('./lib/middleware/checkSlackToken');
+
 router.route('/').get((req, res) => {
   res.json({ message: 'Welcome to slotmachine API!' });
 });
 
-router.use('/exams', exam);
-router.use('/users', user);
-router.use('/meetings', meeting);
+router.use('/exams', checkSlackToken, exam);
+router.use('/users', checkSlackToken, user);
+router.use('/meetings', checkSlackToken, meeting);
 router.use('/repos', repo);
-router.use('/interactivecomp', interactivecomp);
-router.use('/courses', course);
+router.use('/interactivecomp', checkSlackToken, interactivecomp);
+router.use('/courses', checkSlackToken, course);
 
 module.exports = router;

@@ -7,6 +7,8 @@ const request = require('supertest');
 
 const mock = new MockAdapter(axios);
 
+jest.mock('../../lib/middleware/checkSlackToken');
+
 afterEach(() => {
   mock.reset();
 });
