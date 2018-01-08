@@ -18,6 +18,8 @@ services:
     environment:
       - MONGO_DB_URI=mongodb://mongo:27017/slotmachine
       - SLACK_API_TOKEN={{ SLACK_API_TOKEN }}
+      - GITHUB_WEBHOOK_RES_URL={{ GITHUB_WEBHOOK_RES_URL }}
+      - GITHUB_TOKEN={{ GITHUB_TOKEN }}
     command: npm run start
 
   mongo:
