@@ -102,6 +102,7 @@ class RepoController extends Controller {
             const course = await courseFacade.findOne({ title: jobObj.org });
             const memberId = await getSlackUserId(jobObj.user);
             //return all failed testcases in string
+            
             const fails = getTestCases(data);
 
             postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n *${data.failCount} tests failed, no cookie for you!* \n` + ` *Fix the following to be able to book an exam:*\n ${fails}`);
