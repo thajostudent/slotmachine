@@ -113,6 +113,8 @@ class RepoController extends Controller {
         }
       });
     }
+
+    res.sendStatus(400);
   }
 }
 
