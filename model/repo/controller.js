@@ -89,11 +89,11 @@ class RepoController extends Controller {
                         const exam = await examFacade.findOne({ course: jobObj.org + getSemester(), name: jobObj.exam });  
                         await examFacade.update(
                           { _id: exam._id },
-                          { results: { $push: user } }
+                          { $push: { results: user } }
                         );
                         //course.users.push(user);
                         await course.save();
-                        await exam.save();
+                        //await exam.save();
                         // SEND SOMETHING TO THE USER
                         // get user id from user name
                         const memberId = await getSlackUserId(jobObj.name.split("-")[0]);
