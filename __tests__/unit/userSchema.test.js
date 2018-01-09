@@ -7,6 +7,23 @@ var model = require('../../model/user/facade');
 
 
 describe('test mongoose User model', () => {
+    it('should return doc with find', () => {
+        
+                const _doc = {
+            _id: '507f191e810c19729de860ea',
+            username: 'Test',
+            exams: [],
+            results: []
+        };
+        
+        mockingoose.User.toReturn(_doc, 'find');
+
+        return model
+            .find({username: 'Test'})
+            .then(doc => {
+                expect(JSON.parse(JSON.stringify(doc))).toMatchObject(_doc);
+            })
+    });
     it('should return the doc with findById', () => {
 
         const _doc = {
@@ -42,14 +59,14 @@ describe('test mongoose User model', () => {
             });
     });
     it('should return error for missing details', () => {
-        
+
         const _doc = {
             _id: '507f191e810c19729de860ea',
             username: 'Test',
             exams: [],
             results: []
         };
-        
+
         mockingoose.User.toReturn(new Error(), 'save');
         return model
             .create({})
