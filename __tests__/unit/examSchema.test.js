@@ -1,7 +1,7 @@
 /* global expect */
 
 var mockingoose = require('mockingoose').default;
-var model = require('../../model/meeting/facade');
+var model = require('../../model/exam/facade');
 
 
 
@@ -11,11 +11,14 @@ describe('test mongoose User model', () => {
 
         const _doc = {
             _id: '507f191e810c19729de860ea',
-            startTime: "2018-01-25T08:00:00.000Z",
-            endTime: "2018-01-25T09:00:00.000Z"
+            course: "0dv000vt2018",
+            name: "exam-1",
+            attempt: 1,
+            results: [],
+            meetings: []
         };
 
-        mockingoose.Meeting.toReturn(_doc, 'findOne');
+        mockingoose.Exam.toReturn(_doc, 'findOne');
 
         return model
             .findById({ _id: '507f191e810c19729de860ea' })
@@ -27,14 +30,17 @@ describe('test mongoose User model', () => {
 
         const _doc = {
             _id: '507f191e810c19729de860ea',
-            startTime: '2018-01-25T08:00:00.000Z',
-            endTime: '2018-01-25T09:00:00.000Z',
+            course: "0dv000vt2018",
+            name: "exam-1",
+            attempt: 1,
+            results: [],
+            meetings: []
         };
 
-        mockingoose.Meeting.toReturn(_doc, 'update');
+        mockingoose.Exam.toReturn(_doc, 'update');
 
         return model
-            .update({ _id: '507f191e810c19729de860ea' }, { $set: { startTime: '2019-01-25T08:00:00.000Z' } })
+            .update({ _id: '507f191e810c19729de860ea' }, { $set: { name: 'changed' } })
             .then(doc => {
                 expect(JSON.parse(JSON.stringify(doc))).toMatchObject(_doc);
             });
@@ -43,11 +49,14 @@ describe('test mongoose User model', () => {
 
         const _doc = {
             _id: '507f191e810c19729de860ea',
-            startTime: "2018-01-25T08:00:00.000Z",
-            endTime: "2018-01-25T09:00:00.000Z",
+            course: "0dv000vt2018",
+            name: "exam-1",
+            attempt: 1,
+            results: [],
+            meetings: []
         };
 
-        mockingoose.Meeting.toReturn(new Error(), 'save');
+        mockingoose.Exam.toReturn(new Error(), 'save');
         return model
             .create({})
             .catch(err => {
