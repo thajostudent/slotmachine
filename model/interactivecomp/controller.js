@@ -219,6 +219,12 @@ class InteractivecompController extends Controller {
 
     switch (action) {
       case 'showExam':
+        ExamFacade.findById(examId)
+          .then(exam => (
+            res.send(exam)
+          )).catch(err => (
+            res.json({ error: 'Sorry, something went wrong.' })
+          ));
         return res.send();
       case 'deleteExam':
         ExamFacade.remove({ _id: examId })
