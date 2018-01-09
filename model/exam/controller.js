@@ -167,14 +167,20 @@ class ExamController extends Controller {
                 name: 'showExam',
                 text: 'Show',
                 type: 'button',
-                value: `${exam.course}`
+                value: JSON.stringify({
+                  examId: `${exam._id}`,
+                  courseName: `${exam.course}`
+                })
               },
               {
                 name: 'deleteExam',
                 text: 'Delete',
                 type: 'button',
                 style: 'danger',
-                value: `${exam.course}`,
+                value: JSON.stringify({
+                  examId: `${exam._id}`,
+                  courseName: `${exam.course}`
+                }),
                 confirm: {
                   title: 'Are you sure?',
                   ok_text: 'Yes',
