@@ -113,13 +113,16 @@ describe('List exams', () => {
   });
 });
 
-describe('Delete exam', () => {
+/* describe('Delete exam', () => {
   it('should reply with name of deleted exam', () => {
     const requestBody = {
       actions: [
         {
           name: 'deleteExam',
-          value: '2dv611'
+          value: JSON.stringify({
+            courseName: '2dv611',
+            examId: '23'
+          })
         }
       ],
       callback_id: 'listExams'
@@ -127,9 +130,9 @@ describe('Delete exam', () => {
 
     return request(app)
       .post('/interactivecomp')
-      .send({ payload: JSON.stringify(requestBody) })
+      .send({ payload: requestBody })
       .then((response) => {
-        expect(response.text).toEqual(`Exam for ${requestBody.actions[0].value} deleted.`);
+        expect(response.text).toEqual(`Exam for ${requestBody.actions[0].value.courseName} deleted.`);
       });
   });
-});
+}); */
