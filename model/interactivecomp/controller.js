@@ -212,16 +212,17 @@ class InteractivecompController extends Controller {
 
   listExams(req, res, next) {
 
+    const payload = JSON.parse(req.body.payload);
     const action = JSON.parse(req.body.payload).actions[0].name;
-    const course = JSON.parse(req.body.payload).actions[0].value;
+    const courseName = JSON.parse(payload.actions[0].value).courseName;
+    const examId = JSON.parse(payload.actions[0].value).examId;
 
     switch (action) {
       case 'showExam':
-        // TODO: send back exam info
         return res.send();
       case 'deleteExam':
-        ExamFacade.remove({ course });
-        return res.send(`Exam for ${course} deleted.`);
+        ExamFacade.remove({ _id: examId });
+        return res.send(`Exam for ${courseName} deleted.`);
       default:
         break;
     }
