@@ -225,7 +225,7 @@ class InteractivecompController extends Controller {
           )).catch(err => (
             res.json({ error: 'Sorry, something went wrong.' })
           ));
-        return res.send();
+        break;
       case 'deleteExam':
         ExamFacade.remove({ _id: examId })
           .then(() => (
