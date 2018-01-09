@@ -221,12 +221,17 @@ class InteractivecompController extends Controller {
       case 'showExam':
         return res.send();
       case 'deleteExam':
-        ExamFacade.remove({ _id: examId });
-        return res.send(`Exam for ${courseName} deleted.`);
+        ExamFacade.remove({ _id: examId })
+          .then(() => (
+            res.send(`Exam for ${courseName} deleted.`)
+          ))
+          .catch(err => (
+            res.json({ error: 'Sorry, something went wrong.' })
+          ));
+        break;
       default:
         break;
     }
-    res.send();
   }
 
   payload(req, res, next) {
