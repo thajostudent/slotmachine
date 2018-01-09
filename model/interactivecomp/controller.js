@@ -148,21 +148,29 @@ class InteractivecompController extends Controller {
   async bookExam(req, res, next) {
 
     const payload = JSON.parse(req.body.payload);
-    const buttonValue = payload.actions[0].value.split(':');
+    const buttonValue = JSON.parse(payload.actions[0].value);
 
-    const userId = payload.user.id;
+    const slackUserId = payload.user.id;
     const username = payload.user.name;
-    const meetingId = buttonValue[0];
-    const examId = buttonValue[1];
+    const meetingId = buttonValue.meetingId;
+    const examId = buttonValue.examId;
 
-    const meeting = await MeetingFacade.findById(meetingId);
-    const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
-
+    // Check if user exists
     const user = await UserFacade.findOne({ username });
-    console.log(username)
     if (!user) {
       return res.send('Sorry, you don\'t seem to exist in the database.');
     }
+
+    // Check if exam is already booked
+    const exam = await ExamFacade.findOne({ _id: examId });
+    let responseMessage;
+    exam.meetings.forEach((meeting) => {
+      if (meeting.student && meeting.student.equals(user._id)) {
+        responseMessage = 'Exam already booked';
+      }
+    });
+
+    if (responseMessage) return res.send(responseMessage);
 
     // Check if tests are OK
     const testsPassed = await ExamFacade.findById(examId).then((exam) => {
@@ -179,18 +187,13 @@ class InteractivecompController extends Controller {
       return res.send('Your tests have not passed. Please fix your code before booking.');
     }
 
-    // Check if exam is already booked
-    let responseMessage;
-    user.exams.forEach((exam) => {
-      if (exam.equals(examId)) {
-        responseMessage = 'Exam already booked';
-      }
-    });
-    if (responseMessage) return res.send(responseMessage);
+    const meeting = await MeetingFacade.findById(meetingId);
+    const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
 
-    UserFacade.update(
-      { username },
-      { $addToSet: { exams: examId } },
+    // Book exam on choosen meeting time
+    MeetingFacade.update(
+      { _id: meetingId },
+      { $addToSet: { student: user._id } },
       { upsert: true }
     );
 
@@ -201,7 +204,7 @@ class InteractivecompController extends Controller {
         Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      data: `as_user=false&username=slotmachine&channel=${userId}&text=${response}`
+      data: `as_user=false&username=slotmachine&channel=${slackUserId}&text=${response}`
     });
 
     return res.send();
