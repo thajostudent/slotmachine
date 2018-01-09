@@ -27,7 +27,6 @@ class RepoController extends Controller {
 
     // Picking of need parts of Url for hook
     const orgAndRepo = getOrgAndRepo(repoUrl);
-    // console.log(orgAndRepo);
     // Setting the webhook on github
     try {
       await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, 'slackapi', process.env.GITHUB_WEBHOOK_RES_URL, ['release']);
