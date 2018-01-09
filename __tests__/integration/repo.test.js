@@ -1,3 +1,5 @@
+/* global expect, jest, afterAll */
+
 const app = require('../../index');
 const axios = require('axios');
 const MockAdapter = require('axios-mock-adapter');

@@ -1,4 +1,4 @@
-/* global expect */
+/* global expect, jest, afterAll */
 
 const app = require('../../index');
 const request = require('supertest');
