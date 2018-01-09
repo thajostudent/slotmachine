@@ -50,10 +50,10 @@ class UserController extends Controller {
   }
 
   async getExams(req, res, next) {
-    console.log(req.body.user_name)
+    console.log(req.body.user_name);
     userFacade.findOne({ username: req.body.user_name })
       .then((doc) => {
-        if (!doc.exams) return res.send({ text: 'You don\'t have any booked exams' })
+        if (!doc.exams) return res.send({ text: 'You don\'t have any booked exams' });
         console.log(doc.exams);
         doc.exams.forEach((exam) => {
           examFacade.findOne({ _id: exam })
@@ -64,7 +64,7 @@ class UserController extends Controller {
             Attempts: ${doc.attempt}
             Results: ${doc.results}
             *Upcomming meetings:*
-            `
+            `;
             doc.meetings.forEach((meeting) => {
               text += `
                 Id: ${meeting._id}
@@ -81,13 +81,17 @@ class UserController extends Controller {
               mrkdwn: true,
               text
             });
-          })
-        })
+          });
+        });
       })
       .catch((error) => (
         console.log(error)
-      ))
+      ));
   }
+  async whatsMyName(req, res, next) {
+    res.send(req.body.user_name);
+  }
+  
 }
 
 
