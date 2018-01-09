@@ -58,10 +58,31 @@ class UserController extends Controller {
         doc.exams.forEach((exam) => {
           examFacade.findOne({ _id: exam })
           .then(doc => {
-            console.log(doc)
+            let text = `
+            *Course: ${doc.course}*
+            Exam: ${doc.name}
+            Attempts: ${doc.attempt}
+            Results: ${doc.results}
+            *Upcomming meetings:*
+            `
+            doc.meetings.forEach((meeting) => {
+              text += `
+                Id: ${meeting._id}
+                `;
+              text += `
+                Start: ${meeting.startTime}
+                `;
+              text += `
+                End: ${meeting.endTime}
+                `;
+            });
+            return res.send({
+              username: "ExamBot",
+              mrkdwn: true,
+              text
+            });
           })
         })
-        return res.send({ text: 'test' });
       })
       .catch((error) => (
         console.log(error)
