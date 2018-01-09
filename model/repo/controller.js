@@ -27,21 +27,23 @@ class RepoController extends Controller {
 
     // Picking of need parts of Url for hook
     const orgAndRepo = getOrgAndRepo(repoUrl);
-    console.log(orgAndRepo);
+    // console.log(orgAndRepo);
     // Setting the webhook on github
     try {
-
       await setGitHook(orgAndRepo, process.env.GITHUB_TOKEN, 'slackapi', process.env.GITHUB_WEBHOOK_RES_URL, ['release']);
 
       return res.send({
         text: `${repoUrl} succesfully added`
       });
     } catch (e) {
-      console.log(e);
-      if (e.message.includes('already exists')) {
-        return res.send({
-          text: `${repoUrl} has already been added`
-        });
+      if (e.response.data.errors) {
+        for (let i = 0; i < e.response.data.errors.length; i += 1) {
+          if (e.response.data.errors[i].message.includes('already exists')) {
+            return res.send({
+              text: `${repoUrl} has already been added`
+            });
+          }
+        }
       }
       return res.send({
         text: `There was a problem adding ${repoUrl} sorry about that!`
