@@ -58,7 +58,7 @@ describe('createExamToObject', () => {
     });
 
     const examDate = examObject.date;
-    
+
     expect(examDate.getFullYear()).toEqual(new Date().getFullYear());
     expect(examDate.getMonth()).toBe(10);
     expect(examDate.getDate()).toBe(25);

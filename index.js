@@ -22,10 +22,10 @@ app.use(morgan('tiny'));
 
 app.use('/', routes); // This is a test
 
-/*app.use(function(error, req, res, next) {
+/* app.use(function(error, req, res, next) {
   console.log(error);
   //res.json({ message: error.message });
-});*/
+}); */
 
 const server = app.listen(config.server.port, () => {
   console.log(`Magic happens on port ${config.server.port}`);

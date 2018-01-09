@@ -11,4 +11,4 @@ const meetingSchema = new Schema({
 
 
 module.exports =  meetingSchema;
-//module.exports = mongoose.model('Meeting', meetingSchema);
+// module.exports = mongoose.model('Meeting', meetingSchema);

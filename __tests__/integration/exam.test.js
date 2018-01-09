@@ -15,9 +15,9 @@ afterEach(() => {
   mock.reset();
 });
 
-afterAll(() => {
-  return app.close();
-});
+afterAll(() => (
+  app.close()
+));
 
 describe('Create exam', () => {
   it('should fail if user is not admin', () => {
