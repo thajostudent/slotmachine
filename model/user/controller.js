@@ -52,8 +52,8 @@ class UserController extends Controller {
   async getExams(req, res, next) {
     console.log(req.body.user_name);
     userFacade.findOne({ username: req.body.user_name })
-      .then((doc) => {
-        console.log(doc);
+      .then((user) => {
+        /*console.log(doc);
         if (!doc || !doc.exams) return res.send({ text: 'You don\'t have any booked exams' });
         console.log(doc.exams);
         doc.exams.forEach((exam) => {
@@ -83,7 +83,7 @@ class UserController extends Controller {
               text
             });
           });
-        });
+        });*/
       })
       .catch((error) => (
         console.log(error)
