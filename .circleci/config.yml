@@ -205,13 +205,16 @@ workflows:
           filters:
             branches:
               only: master
-      - deploy:
+      - release:
           type: approval
           requires:
             - integration-tests
           filters:
             branches:
               only: master
+      - deploy:
+          requires:
+            - release
       - smoke-test:
           requires:
             - deploy
