@@ -30,10 +30,10 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
-          prefix: tests
+          directory: tests
       - store_artifacts:
           path: coverage
-          prefix: coverage
+          directory: coverage
 
   integration-tests:
     docker:
@@ -73,7 +73,7 @@ jobs:
       - run:
           name: Copy test results to artifact folder
           command: |
-            docker cp web:/usr/src/app/junit.xml ~/junit/junit.xml
+            docker cp web:${WORKING_DIRECTORY}/junit.xml ~/junit/junit.xml
           when: always
       - run:
           name: Login to Docker Hub
@@ -91,7 +91,7 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
-          prefix: tests
+          directory: tests
 
   staging:
     docker:
@@ -102,7 +102,8 @@ jobs:
       - run:
           name: Append variables to host_vars file
           command: |
-            echo "DOCKER_USER: ${DOCKER_USER}
+            echo "working_directory: ${WORKING_DIRECTORY}
+            DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_STAGING}
             SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_STAGING}
@@ -124,10 +125,15 @@ jobs:
       - run:
           name: Append variables to host_vars file
           command: |
-            echo "DOCKER_USER: ${DOCKER_USER}
+            echo "working_directory: ${WORKING_DIRECTORY}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_PRODUCTION}
-            SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_PRODUCTION}" >> devops/environments/production/host_vars/$ANSIBLE_HOSTNAME
+            SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_PRODUCTION}
+            JENKINS_URL: ${JENKINS_URL}
+            JENKINS_USERNAME: ${JENKINS_USERNAME}
+            JENKINS_PASSWORD: ${JENKINS_PASSWORD}
+            GITHUB_WEBHOOK_RES_URL: ${GITHUB_WEBHOOK_RES_URL}
+            GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/production/host_vars/$ANSIBLE_HOSTNAME
       - run: 
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml

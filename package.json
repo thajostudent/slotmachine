@@ -52,7 +52,10 @@
       "!**/node_modules/**",
       "!**/coverage/**",
       "!lib/controller.js",
-      "!lib/facade.js"
+      "!lib/facade.js",
+      "!index.js",
+      "!routes.js",
+      "!config.js"
     ]
   }
 }
