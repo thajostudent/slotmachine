@@ -21,6 +21,7 @@ jobs:
           name: Create test directory
           command: mkdir ~/junit
       - run:
+          name: Run unit tests with coverage
           command: |
             npm run test:unit
             cp junit.xml ~/junit/junit.xml
@@ -29,6 +30,10 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
+          prefix: tests
+      - store_artifacts:
+          path: ~/coverage
+          prefix: coverage
 
   integration-tests:
     docker:
@@ -63,9 +68,6 @@ jobs:
           name: Create test directory
           command: mkdir ~/junit
       - run:
-          name: Create coverage directory
-          command: mkdir ~/coverage
-      - run:
           name: Run tests
           command: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
       - run:
@@ -73,10 +75,6 @@ jobs:
           command: |
             docker cp web:/usr/src/app/junit.xml ~/junit/junit.xml
           when: always
-      - run:
-          name: Copy coverage to artifact folder
-          command: |
-            docker cp web:/usr/src/app/coverage ~/coverage
       - run:
           name: Login to Docker Hub
           command: |
@@ -93,9 +91,7 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
-      - store_artifacts:
-          path: ~/coverage
-          prefix: coverage
+          prefix: tests
 
   staging:
     docker:
