@@ -52,10 +52,10 @@ jobs:
           command: mkdir ~/eslint
       - run:
           name: eslint
-          command: |
-            yarn lint
-            cat eslint.html
-            cp eslint.html ~/eslint/eslint.html
+          command: yarn lint
+      - run:
+          name: copy eslint.html to artifact folder
+          command: cp eslint.html ~/eslint/eslint.html
           when: always
       - store_artifacts:
           path: ~/eslint
