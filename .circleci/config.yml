@@ -146,9 +146,10 @@ jobs:
   deploy:
     docker:
       - image: fmenkes/ansible-git
-    working_directory: ~/tmp
+    working_directory: ~/circleci
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/circleci
       - run:
           name: Append variables to host_vars file
           command: |
@@ -165,6 +166,9 @@ jobs:
       - run: 
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
+      - persist_to_workspace:
+          root: .
+          paths: .
 
   smoke-test:
     docker:
