@@ -54,6 +54,7 @@ jobs:
           name: eslint
           command: |
             yarn lint
+            cat eslint.html
             cp eslint.html ~/eslint/eslint.html
           when: always
       - store_artifacts:
