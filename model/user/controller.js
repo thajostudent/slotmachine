@@ -1,7 +1,7 @@
 const axios = require('axios');
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
-
+const meetingFacade = require('../meeting/facade')
 
 
 class UserController extends Controller {
@@ -53,6 +53,12 @@ class UserController extends Controller {
     console.log(req.body.user_name);
     userFacade.findOne({ username: req.body.user_name })
       .then((user) => {
+        meetingFacade.find({ student: user._id })
+          .then(meetings => {
+            meetings.forEach(meeting => {
+              console.log(meeting);
+            })
+          })
         /*console.log(doc);
         if (!doc || !doc.exams) return res.send({ text: 'You don\'t have any booked exams' });
         console.log(doc.exams);
