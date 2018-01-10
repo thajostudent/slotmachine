@@ -176,6 +176,7 @@ jobs:
       - run:
           name: Smoke test
           command: '[ "$(eval curl -L -s -o /dev/null -w "%{http_code}" ${PRODUCTION_URL})" -eq "200" ]'
+          no_output_timeout: "15s"
       - run:
           name: Rollback
           command: |

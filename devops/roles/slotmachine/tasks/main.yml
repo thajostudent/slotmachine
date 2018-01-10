@@ -12,7 +12,7 @@
 
 - name: Copy nginx configuration
   copy:
-    src: nginx.conf
+    src: "{{ nginx_path }}"
     dest: "{{ working_directory }}/nginx.conf"
 
 - name: Login to Docker Hub
