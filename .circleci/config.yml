@@ -6,8 +6,6 @@ jobs:
     working_directory: ~/circleci
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/circleci
       - restore_cache:
           keys: 
             - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -21,22 +19,23 @@ jobs:
           paths:
             - "~/.cache/yarn/v1"
       - run: 
-          name: Create test directory
-          command: mkdir ~/junit
+          name: Create test and coverage directories
+          command: |
+            mkdir ~/junit
+            mkdir ~/coverage
       - run:
           name: Run unit tests with coverage
           command: |
             npm run test:unit
             cp junit.xml ~/junit/junit.xml
+            cp -a coverage/. ~/coverage/
           when: always
       - store_test_results:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
-          directory: tests
       - store_artifacts:
-          path: coverage
-          directory: coverage
+          path: ~/coverage
       - persist_to_workspace:
           root: .
           paths: .
@@ -52,13 +51,14 @@ jobs:
           name: Create eslint directory
           command: mkdir ~/eslint
       - run:
+          name: eslint
           command: |
             yarn lint
+            cat eslint.html
             cp eslint.html ~/eslint/eslint.html
           when: always
       - store_artifacts:
           path: ~/eslint
-          directory: eslint
 
   integration-tests:
     docker:
