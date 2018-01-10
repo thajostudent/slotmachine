@@ -220,11 +220,40 @@ class InteractivecompController extends Controller {
     switch (action) {
       case 'showExam':
         ExamFacade.findById(examId)
-          .then(exam => (
-            res.send(exam)
-          )).catch(err => (
-            res.json({ error: 'Sorry, something went wrong.' })
-          ));
+          .then(doc => (
+             res.send({
+               text: `Meetings for exam ${doc.name}:`,
+               attachments: doc.meetings.map((meeting, index) => (
+                 {
+                   title: `Meeting ${index + 1}:`,
+                   title_link: 'https://www.google.com',
+                   text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`,
+                   callback_id: 'bookExam',
+                   actions: [
+                     {
+                       name: 'bookExam',
+                       text: 'Book',
+                       type: 'button',
+                       style: 'primary',
+                       value: JSON.stringify({
+                         meetingId: `${meeting._id}`,
+                         examId: `${doc._id}`
+                       }),
+                       confirm: {
+                         title: 'Are you sure?',
+                         ok_text: 'Yes',
+                         dismiss_text: 'No'
+                       }
+                     }
+                   ]
+                 }
+              ))
+             })
+          ))
+          .catch((err) => {
+            console.error(err);
+            res.send({ text: 'Sorry, something went wrong.' });
+          });
         break;
       case 'deleteExam':
         ExamFacade.remove({ _id: examId })
