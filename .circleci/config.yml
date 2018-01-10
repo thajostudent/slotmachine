@@ -122,7 +122,7 @@ jobs:
 
   staging:
     docker:
-      - image: williamyeh/ansible:ubuntu16.04
+      - image: fmenkes/ansible-git
     working_directory: ~/tmp
     steps:
       - checkout
@@ -145,7 +145,7 @@ jobs:
     
   deploy:
     docker:
-      - image: williamyeh/ansible:ubuntu16.04
+      - image: fmenkes/ansible-git
     working_directory: ~/tmp
     steps:
       - checkout
@@ -166,6 +166,22 @@ jobs:
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
 
+  smoke-test:
+    docker:
+      - image: fmenkes/ansible-git
+    working_directory: ~/circleci
+    steps:
+      - attach_workspace:
+          at: ~/circleci
+      - run:
+          name: Smoke test
+          command: '[ "$(eval curl -L -s -o /dev/null -w "%{http_code}" ${PRODUCTION_URL})" -eq "200" ]'
+      - run:
+          name: Rollback
+          command: |
+            git checkout HEAD~1
+            ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
+          when: on_fail
   
 workflows:
   version: 2
@@ -194,3 +210,6 @@ workflows:
       - deploy:
           requires:
             - hold
+      - smoke-test:
+          requires:
+            - deploy
