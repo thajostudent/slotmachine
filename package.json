@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
+    "lint": "eslint -o eslint.html -f html .",
     "start": "node index.js",
-    "test": "MONGODB_URI=mongodb://mongo:27017/slotmachine-test jest --coverage --forceExit",
+    "test": "MONGO_DB_URI=mongodb://localhost:27017/slotmachine-test jest --forceExit",
     "test:unit": "jest unit --coverage",
     "test:integration": "jest int --forceExit",
-    "test:devint": "MONGODB_URI=mongodb://mongo:27017/slotmachine-test jest int --coverage --forceExit"
+    "test:devint": "MONGO_DB_URI=mongodb://localhost:27017/slotmachine-test jest int --forceExit"
   },
   "engines": {
     "node": ">=6"
