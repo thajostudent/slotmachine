@@ -216,7 +216,7 @@ class InteractivecompController extends Controller {
     const action = JSON.parse(req.body.payload).actions[0].name;
     const courseName = JSON.parse(payload.actions[0].value).courseName;
     const examId = JSON.parse(payload.actions[0].value).examId;
-    let userIsAdmin = false;
+    // let userIsAdmin = false;
 
     try {
       const response = await axios({
@@ -230,7 +230,7 @@ class InteractivecompController extends Controller {
       });
 
       if (response.data.user.is_admin) {
-        userIsAdmin = true;
+        // userIsAdmin = true;
       }
     } catch (e) {
       return res.send('Sorry, something went wrong.');

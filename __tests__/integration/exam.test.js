@@ -43,16 +43,16 @@ describe('Create exam', () => {
 });
 
 describe('Book exam', () => {
-  it('should notify if there are no exams available', () => {
-    return request(app)
+  it('should notify if there are no exams available', () => (
+    request(app)
       .post('/exams/book')
       .send({
         channel_name: 'general'
       })
       .then((response) => {
         expect(response.body.text).toEqual('Sorry, no exams found for this course.');
-      });
-  });
+      })
+  ));
 
   it('should return one attachment per meeting', async () => {
     const firstMeeting = mongoose.Types.ObjectId();

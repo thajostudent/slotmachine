@@ -58,13 +58,13 @@ class UserController extends Controller {
         console.log(doc.exams);
         doc.exams.forEach((exam) => {
           examFacade.findOne({ _id: exam })
-          .then(doc => {
+          .then((doc) => {
             let text = `
             *Course: ${doc.course}*
             Exam: ${doc.name}
             Attempts: ${doc.attempt}
             Results: ${doc.results}
-            *Upcomming meetings:*
+            *Upcoming meetings:*
             `;
             doc.meetings.forEach((meeting) => {
               text += `
@@ -78,14 +78,14 @@ class UserController extends Controller {
                 `;
             });
             return res.send({
-              username: "ExamBot",
+              username: 'ExamBot',
               mrkdwn: true,
               text
             });
           });
         });
       })
-      .catch((error) => (
+      .catch(error => (
         console.log(error)
       ));
   }
