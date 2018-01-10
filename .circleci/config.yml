@@ -32,7 +32,7 @@ jobs:
           path: ~/junit
           prefix: tests
       - store_artifacts:
-          path: ~/coverage
+          path: coverage
           prefix: coverage
 
   integration-tests:
