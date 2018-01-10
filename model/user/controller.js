@@ -1,4 +1,5 @@
 const axios = require('axios');
+const moment = require('moment');
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
 const meetingFacade = require('../meeting/facade')
@@ -55,9 +56,33 @@ class UserController extends Controller {
       .then((user) => {
         meetingFacade.find({ student: user._id })
           .then(meetings => {
-            meetings.forEach(meeting => {
-              console.log(meeting);
-            })
+            return res.send({
+              text: `Your booked meetings:`,
+              attachments: meetings.map((meeting, index) => (
+                {
+                  title: `Meeting ${index + 1}:`,
+                  title_link: 'https://www.google.com',
+                  text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`,
+                  callback_id: 'removeBooking',
+                  actions: [
+                    {
+                      name: 'removeBooking',
+                      text: 'Remove',
+                      type: 'button',
+                      style: 'primary',
+                      value: JSON.stringify({
+                        meetingId: `${meeting._id}`
+                      }),
+                      confirm: {
+                        title: 'Are you sure?',
+                        ok_text: 'Yes',
+                        dismiss_text: 'No'
+                      }
+                    }
+                  ]
+                }
+              ))
+            });
           })
         /*console.log(doc);
         if (!doc || !doc.exams) return res.send({ text: 'You don\'t have any booked exams' });
