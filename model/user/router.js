@@ -7,7 +7,7 @@ router.route('/')
 
 router.route('/exams')
   .post((...args) => controller.getExams(...args));
-  
+
 router.route('/whatsmyname')
   .post((...args) => controller.whatsMyName(...args));
 
