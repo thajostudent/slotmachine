@@ -126,6 +126,7 @@ jobs:
           name: Append variables to host_vars file
           command: |
             echo "working_directory: ${WORKING_DIRECTORY}
+            DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_PRODUCTION}
             SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_PRODUCTION}

@@ -1,11 +1,5 @@
 ---
-- hosts: all
-  become: yes
-  roles:
-    #- common
-
 - hosts: slotmachine
   become: yes
   roles:
-    #- docker
     - slotmachine
