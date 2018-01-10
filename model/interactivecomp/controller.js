@@ -233,12 +233,13 @@ class InteractivecompController extends Controller {
         userIsAdmin = true;
       }
     } catch (e) {
+      console.log(e);
       return res.send('Sorry, something went wrong.');
     }
 
     switch (action) {
       case 'showExam':
-        ExamFacade.findById(examId)
+        ExamFacade.findOne({ _id: examId })
           .then(doc => (
              res.send({
                text: `Meetings for exam ${doc.name}:`,
