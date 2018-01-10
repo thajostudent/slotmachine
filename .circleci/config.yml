@@ -25,8 +25,10 @@ jobs:
             mkdir ~/coverage
       - run:
           name: Run unit tests with coverage
+          command: yarn test:unit
+      - run:
+          name: Copy test results and coverage to artifact folders
           command: |
-            npm run test:unit
             cp junit.xml ~/junit/junit.xml
             cp -a coverage/. ~/coverage/
           when: always
