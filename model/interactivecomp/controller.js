@@ -210,12 +210,31 @@ class InteractivecompController extends Controller {
     return res.send();
   }
 
-  listExams(req, res, next) {
+  async listExams(req, res, next) {
 
     const payload = JSON.parse(req.body.payload);
     const action = JSON.parse(req.body.payload).actions[0].name;
     const courseName = JSON.parse(payload.actions[0].value).courseName;
     const examId = JSON.parse(payload.actions[0].value).examId;
+    let userIsAdmin = false;
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://slack.com/api/users.info',
+        headers: {
+          Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: `user=${payload.user.id}`
+      });
+
+      if (response.data.user.is_admin) {
+        userIsAdmin = true;
+      }
+    } catch (e) {
+      return res.send('Sorry, something went wrong.');
+    }
 
     switch (action) {
       case 'showExam':
