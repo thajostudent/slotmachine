@@ -3,8 +3,11 @@ jobs:
   unit-tests:
     docker:
       - image: circleci/node:8.9.1
+    working_directory: ~/circleci
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/circleci
       - restore_cache:
           keys: 
             - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -34,6 +37,28 @@ jobs:
       - store_artifacts:
           path: coverage
           directory: coverage
+      - persist_to_workspace:
+          root: .
+          paths: .
+
+  eslint:
+    docker:
+      - image: circleci/node:8.9.1
+    working_directory: ~/circleci
+    steps:
+      - attach_workspace:
+          at: ~/circleci
+      - run:
+          name: Create eslint directory
+          command: mkdir ~/eslint
+      - run:
+          command: |
+            yarn lint
+            cp eslint.html ~/eslint/eslint.html
+          when: always
+      - store_artifacts:
+          path: ~/eslint
+          directory: eslint
 
   integration-tests:
     docker:
@@ -145,6 +170,9 @@ workflows:
   circleci:
     jobs:
       - unit-tests
+      - eslint:
+          requires:
+            - unit-tests
       - integration-tests:
           requires:
             - unit-tests
