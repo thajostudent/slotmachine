@@ -170,7 +170,10 @@ describe('Delete exam', () => {
           })
         }
       ],
-      callback_id: 'listExams'
+      callback_id: 'listExams',
+      user: {
+        id: 'what'
+      }
     };
 
     const courseName = JSON.parse(requestBody.actions[0].value).courseName;
@@ -180,6 +183,9 @@ describe('Delete exam', () => {
     const doc = Exam.findById(examId);
 
     expect(doc).not.toBeFalsy();
+
+    const data = { user: { is_admin: true } };
+    mock.onPost('https://slack.com/api/users.info').reply(200, data);
 
     const response = await request(app)
       .post('/interactivecomp')
