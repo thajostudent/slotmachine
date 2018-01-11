@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
+    "lint": "eslint -o eslint.html -f html .",
     "start": "node index.js",
-    "test": "jest --coverage --forceExit",
-    "test:unit": "jest unit",
+    "test": "MONGO_DB_URI=mongodb://localhost:27017/slotmachine-test jest --forceExit",
+    "test:unit": "jest unit --coverage",
     "test:integration": "jest int --forceExit",
-    "test:devint": "MONGODB_URI=mongodb://mongo:27017/slotmachine-test jest int --forceExit"
+    "test:devint": "MONGO_DB_URI=mongodb://localhost:27017/slotmachine-test jest int --forceExit"
   },
   "engines": {
     "node": ">=6"
@@ -46,6 +47,16 @@
     "supertest": "^3.0.0"
   },
   "jest": {
-    "testResultsProcessor": "./node_modules/jest-junit"
+    "testResultsProcessor": "./node_modules/jest-junit",
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/node_modules/**",
+      "!**/coverage/**",
+      "!lib/controller.js",
+      "!lib/facade.js",
+      "!index.js",
+      "!routes.js",
+      "!config.js"
+    ]
   }
 }

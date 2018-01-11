@@ -233,23 +233,83 @@ class InteractivecompController extends Controller {
     return res.send();
   }
 
-  listExams(req, res, next) {
+  async listExams(req, res, next) {
 
     const payload = JSON.parse(req.body.payload);
     const action = JSON.parse(req.body.payload).actions[0].name;
     const courseName = JSON.parse(payload.actions[0].value).courseName;
     const examId = JSON.parse(payload.actions[0].value).examId;
+    // let userIsAdmin = false;
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://slack.com/api/users.info',
+        headers: {
+          Authorization: `Bearer ${process.env.SLACK_API_TOKEN}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: `user=${payload.user.id}`
+      });
+
+      if (response.data.user.is_admin) {
+        // userIsAdmin = true;
+      }
+    } catch (e) {
+      console.log(e);
+      return res.send('Sorry, something went wrong.');
+    }
 
     switch (action) {
       case 'showExam':
-        return res.send();
+        ExamFacade.findOne({ _id: examId })
+          .then(doc => (
+             res.send({
+               text: `Meetings for exam ${doc.name}:`,
+               attachments: doc.meetings.map((meeting, index) => (
+                 {
+                   title: `Meeting ${index + 1}:`,
+                   title_link: 'https://www.google.com',
+                   text: `${moment(meeting.startTime).format('HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`,
+                   callback_id: 'bookExam',
+                   actions: [
+                     {
+                       name: 'bookExam',
+                       text: 'Book',
+                       type: 'button',
+                       style: 'primary',
+                       value: JSON.stringify({
+                         meetingId: `${meeting._id}`,
+                         examId: `${doc._id}`
+                       }),
+                       confirm: {
+                         title: 'Are you sure?',
+                         ok_text: 'Yes',
+                         dismiss_text: 'No'
+                       }
+                     }
+                   ]
+                 }
+              ))
+             })
+          ))
+          .catch((err) => {
+            console.error(err);
+            res.send({ text: 'Sorry, something went wrong.' });
+          });
+        break;
       case 'deleteExam':
-        ExamFacade.remove({ _id: examId });
-        return res.send(`Exam for ${courseName} deleted.`);
+        ExamFacade.remove({ _id: examId })
+          .then(() => (
+            res.send(`Exam for ${courseName} deleted.`)
+          ))
+          .catch(err => (
+            res.json({ error: 'Sorry, something went wrong.' })
+          ));
+        break;
       default:
         break;
     }
-    res.send();
   }
 
   payload(req, res, next) {

@@ -12,8 +12,9 @@
 
 - name: Copy nginx configuration
   copy:
-    src: nginx.conf
+    src: "{{ nginx_path }}"
     dest: "{{ working_directory }}/nginx.conf"
+  register: nginx_conf
 
 - name: Login to Docker Hub
   shell: docker login -u {{ DOCKER_USER }} -p {{ DOCKER_PASSWORD }}
@@ -30,6 +31,10 @@
   shell: docker-compose -f docker-compose.yml up -d
   args:
     chdir: "{{ working_directory }}"
+
+- name: Restart docker nginx
+  shell: docker restart nginx
+  when: nginx_conf.changed
 
 - name: Remove dangling images
   shell: docker rmi $(docker images -qa -f "dangling=true")

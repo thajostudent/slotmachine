@@ -3,6 +3,7 @@ jobs:
   unit-tests:
     docker:
       - image: circleci/node:8.9.1
+    working_directory: ~/circleci
     steps:
       - checkout
       - restore_cache:
@@ -18,17 +19,48 @@ jobs:
           paths:
             - "~/.cache/yarn/v1"
       - run: 
-          name: Create test directory
-          command: mkdir ~/junit
-      - run:
+          name: Create test and coverage directories
           command: |
-            npm run test:unit
+            mkdir ~/junit
+            mkdir ~/coverage
+      - run:
+          name: Run unit tests with coverage
+          command: yarn test:unit
+      - run:
+          name: Copy test results and coverage to artifact folders
+          command: |
             cp junit.xml ~/junit/junit.xml
+            cp -a coverage/. ~/coverage/
           when: always
       - store_test_results:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
+      - store_artifacts:
+          path: ~/coverage
+      - persist_to_workspace:
+          root: .
+          paths: .
+
+  eslint:
+    docker:
+      - image: circleci/node:8.9.1
+    working_directory: ~/circleci
+    steps:
+      - attach_workspace:
+          at: ~/circleci
+      - run:
+          name: Create eslint directory
+          command: mkdir ~/eslint
+      - run:
+          name: eslint
+          command: yarn lint
+      - run:
+          name: copy eslint.html to artifact folder
+          command: cp eslint.html ~/eslint/eslint.html
+          when: always
+      - store_artifacts:
+          path: ~/eslint
 
   integration-tests:
     docker:
@@ -68,7 +100,7 @@ jobs:
       - run:
           name: Copy test results to artifact folder
           command: |
-            docker cp web:/usr/src/app/junit.xml ~/junit/junit.xml
+            docker cp web:${WORKING_DIRECTORY}/junit.xml ~/junit/junit.xml
           when: always
       - run:
           name: Login to Docker Hub
@@ -86,24 +118,26 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
+          directory: tests
 
   staging:
     docker:
-      - image: williamyeh/ansible:ubuntu16.04
+      - image: fmenkes/ansible-git
     working_directory: ~/tmp
     steps:
       - checkout
       - run:
           name: Append variables to host_vars file
           command: |
-            echo "DOCKER_USER: ${DOCKER_USER}
+            echo "working_directory: ${WORKING_DIRECTORY}
+            DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_STAGING}
             SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_STAGING}
             JENKINS_URL: ${JENKINS_URL}
             JENKINS_USERNAME: ${JENKINS_USERNAME}
             JENKINS_PASSWORD: ${JENKINS_PASSWORD}
-            GITHUB_WEBHOOK_RES_URL: ${GITHUB_WEBHOOK_RES_URL}
+            API_URL: ${STAGING_URL}
             GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/staging/host_vars/$ANSIBLE_HOSTNAME
       - run: 
           name: Run Ansible playbook
@@ -111,27 +145,57 @@ jobs:
     
   deploy:
     docker:
-      - image: williamyeh/ansible:ubuntu16.04
-    working_directory: ~/tmp
+      - image: fmenkes/ansible-git
+    working_directory: ~/circleci
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/circleci
       - run:
           name: Append variables to host_vars file
           command: |
-            echo "DOCKER_USER: ${DOCKER_USER}
+            echo "working_directory: ${WORKING_DIRECTORY}
+            DOCKER_USER: ${DOCKER_USER}
             DOCKER_PASSWORD: ${DOCKER_PASSWORD}
             SLACK_API_TOKEN: ${SLACK_API_TOKEN_PRODUCTION}
-            SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_PRODUCTION}" >> devops/environments/production/host_vars/$ANSIBLE_HOSTNAME
+            SLACK_VERIFICATION_TOKEN: ${SLACK_VERIFICATION_TOKEN_PRODUCTION}
+            JENKINS_URL: ${JENKINS_URL}
+            JENKINS_USERNAME: ${JENKINS_USERNAME}
+            JENKINS_PASSWORD: ${JENKINS_PASSWORD}
+            API_URL: ${PRODUCTION_URL}
+            GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/production/host_vars/$ANSIBLE_HOSTNAME
       - run: 
           name: Run Ansible playbook
           command: ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
+      - persist_to_workspace:
+          root: .
+          paths: .
 
+  smoke-test:
+    docker:
+      - image: fmenkes/ansible-git
+    working_directory: ~/circleci
+    steps:
+      - attach_workspace:
+          at: ~/circleci
+      - run:
+          name: Smoke test
+          command: '[ "$(eval curl -L -s -o /dev/null -w "%{http_code}" ${PRODUCTION_URL})" -eq "200" ]'
+          no_output_timeout: "15s"
+      - run:
+          name: Rollback
+          command: |
+            git checkout HEAD~1
+            ansible-playbook -i devops/environments/production/inventory.yml devops/site.yml
+          when: on_fail
   
 workflows:
   version: 2
   circleci:
     jobs:
       - unit-tests
+      - eslint:
+          requires:
+            - unit-tests
       - integration-tests:
           requires:
             - unit-tests
@@ -141,7 +205,7 @@ workflows:
           filters:
             branches:
               only: master
-      - hold:
+      - release:
           type: approval
           requires:
             - integration-tests
@@ -150,4 +214,7 @@ workflows:
               only: master
       - deploy:
           requires:
-            - hold
+            - release
+      - smoke-test:
+          requires:
+            - deploy
