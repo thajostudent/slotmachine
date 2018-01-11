@@ -2,7 +2,7 @@ const axios = require('axios');
 const moment = require('moment');
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
-const meetingFacade = require('../meeting/facade')
+const meetingFacade = require('../meeting/facade');
 
 
 class UserController extends Controller {
@@ -55,9 +55,9 @@ class UserController extends Controller {
     userFacade.findOne({ username: req.body.user_name })
       .then((user) => {
         meetingFacade.find({ student: user._id })
-          .then(meetings => {
-            return res.send({
-              text: `Your booked meetings:`,
+          .then(meetings => (
+            res.send({
+              text: 'Your booked meetings:',
               attachments: meetings.map((meeting, index) => (
                 {
                   title: `Meeting ${index + 1}:`,
@@ -82,9 +82,9 @@ class UserController extends Controller {
                   ]
                 }
               ))
-            });
-          })
-        /*console.log(doc);
+            })
+          ));
+        /* console.log(doc);
         if (!doc || !doc.exams) return res.send({ text: 'You don\'t have any booked exams' });
         console.log(doc.exams);
         doc.exams.forEach((exam) => {

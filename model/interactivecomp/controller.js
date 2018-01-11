@@ -150,20 +150,20 @@ class InteractivecompController extends Controller {
     const payload = JSON.parse(req.body.payload);
     const buttonValue = JSON.parse(payload.actions[0].value);
     const meetingId = buttonValue.meetingId;
-    console.log(meetingId)
+    console.log(meetingId);
     if (meetingId) {
       MeetingFacade.update(
         { _id: meetingId },
-        { $unset: { student: "" } }
+        { $unset: { student: '' } }
       );
 
-      return res.send("Your booking is now removed!");
+      return res.send('Your booking is now removed!');
 
 
     }
 
 
-    return res.send('Ops, something went wrong');
+    return res.send('Oops, something went wrong');
 
 
   }
@@ -205,10 +205,10 @@ class InteractivecompController extends Controller {
       });
       return passed;
     }) || false;
-    /*
+
     if (!testsPassed) {
       return res.send('Your tests have not passed. Please fix your code before booking.');
-    }*/
+    }
 
     const meeting = await MeetingFacade.findById(meetingId);
     const response = `Your exam meeting is on ${moment(meeting.startTime).format('MMMM Do YYYY, HH:mm')} - ${moment(meeting.endTime).format('HH:mm')}`;
