@@ -23,7 +23,7 @@ app.use(morgan('tiny'));
 app.use('/', routes); // This is a test
 
 /* app.use(function(error, req, res, next) {
-  console.log(error);
+  console.log(error); //hello
   //res.json({ message: error.message });
 }); */
 
