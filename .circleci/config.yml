@@ -137,7 +137,7 @@ jobs:
             JENKINS_URL: ${JENKINS_URL}
             JENKINS_USERNAME: ${JENKINS_USERNAME}
             JENKINS_PASSWORD: ${JENKINS_PASSWORD}
-            GITHUB_WEBHOOK_RES_URL: ${GITHUB_WEBHOOK_RES_URL}
+            API_URL: ${STAGING_URL}
             GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/staging/host_vars/$ANSIBLE_HOSTNAME
       - run: 
           name: Run Ansible playbook
@@ -161,7 +161,7 @@ jobs:
             JENKINS_URL: ${JENKINS_URL}
             JENKINS_USERNAME: ${JENKINS_USERNAME}
             JENKINS_PASSWORD: ${JENKINS_PASSWORD}
-            GITHUB_WEBHOOK_RES_URL: ${GITHUB_WEBHOOK_RES_URL}
+            API_URL: ${PRODUCTION_URL}
             GITHUB_TOKEN: ${GITHUB_TOKEN}" >> devops/environments/production/host_vars/$ANSIBLE_HOSTNAME
       - run: 
           name: Run Ansible playbook
