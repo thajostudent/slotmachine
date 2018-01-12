@@ -5,26 +5,22 @@ const request = require('supertest');
 
 jest.mock('../../lib/middleware/checkSlackToken');
 
-afterAll(() => (
-   app.close()
-));
+afterAll(() => app.close());
 
 describe('Test the user path', () => {
-  test('It should response the GET method', () => (
+  test('It should response the GET method', () =>
     request(app)
       .get('/users')
-      .then((response) => {
-        expect(response.statusCode).toBe(404);
-      })
-  ));
+      .then(response => {
+        expect(response.statusCode).toBe(406);
+      }));
 });
 
 describe('Test the user/fail! path', () => {
-  test('It should response the GET method', () => (
+  test('It should response the GET method', () =>
     request(app)
       .get('/users/fail')
-      .then((response) => {
+      .then(response => {
         expect(response.statusCode).toBe(404);
-      })
-  ));
+      }));
 });
