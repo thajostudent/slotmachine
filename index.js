@@ -31,5 +31,4 @@ const server = app.listen(config.server.port, () => {
   console.log(`Magic happens on port ${config.server.port}`);
 });
 
-// pushy push
 module.exports = server;
