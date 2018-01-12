@@ -11,7 +11,7 @@ describe('Test the user path', () => {
   test('It should response the GET method', () =>
     request(app)
       .get('/users')
-      .then(response => {
+      .then((response) => {
         expect(response.statusCode).toBe(404);
       }));
 });
@@ -20,7 +20,7 @@ describe('Test the user/fail! path', () => {
   test('It should response the GET method', () =>
     request(app)
       .get('/users/fail')
-      .then(response => {
+      .then((response) => {
         expect(response.statusCode).toBe(404);
       }));
 });
