@@ -1,6 +1,5 @@
 /* global expect, jest */
 
-
 const tools = require('../../lib/tools');
 
 const getSemester = tools.getSemester;
@@ -16,7 +15,7 @@ describe('getSemester', () => {
     expect(getSemester(new Date(2017, 11, 1))).toBe('ht2017');
   });
   it('returns the correct string for January', () => {
-    expect(getSemester(new Date(2018, 0, 1))).toBe('vt2018');
+    expect(getSemester(new Date(2018, 0, 1))).toBe('vt2019');
   });
 });
 
