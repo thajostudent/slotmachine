@@ -28,7 +28,7 @@ app.use('/', routes); // This is a test
 }); */
 
 const server = app.listen(config.server.port, () => {
-  console.log(`Magic happens on port ${config.server.port}`);
+  console.log(`Magic happens on port ${config.server.port}`)
 });
 
 module.exports = server;
