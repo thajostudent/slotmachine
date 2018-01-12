@@ -11,7 +11,7 @@ const course = require('./model/course/router');
 const checkSlackToken = require('./lib/middleware/checkSlackToken');
 
 router.route('/').get((req, res) => {
-  res.json({ message: 'Welcome to the slotmachine API v2.0!' });
+  res.json({ message: 'Welcome to the slotmachine API v2.0.1!' });
 });
 
 router.use('/exams', checkSlackToken, exam);
