@@ -12,7 +12,7 @@ describe('getSemester', () => {
     expect(getSemester()).toEqual(expect.any(String));
   });
   it('returns the correct string for December', () => {
-    expect(getSemester(new Date(2017, 11, 1))).toBe('ht2017');
+    expect(getSemester(new Date(2017, 11, 1))).toBe('ht2019');
   });
   it('returns the correct string for January', () => {
     expect(getSemester(new Date(2018, 0, 1))).toBe('vt2018');
