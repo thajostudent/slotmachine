@@ -12,7 +12,7 @@ describe('Test the user path', () => {
     request(app)
       .get('/users')
       .then((response) => {
-        expect(response.statusCode).toBe(404);
+        expect(response.statusCode).toBe(200);
       }));
 });
 
