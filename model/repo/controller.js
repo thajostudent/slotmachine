@@ -96,7 +96,7 @@ class RepoController extends Controller {
             // get user id from user name
             const memberId = await getSlackUserId(jobObj.user);
             // post message to user that they can book an exam
-            postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n Your tests have gone trough and you are now able to book an exam`);
+            postMessageToSlackUser(memberId, course.channelid, `<@${memberId}>\n Your tests have gone through and you are now able to book an exam`);
           } catch (e) { console.log(e.message); }
         } else {
           try {
