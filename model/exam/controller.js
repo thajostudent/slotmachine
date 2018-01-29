@@ -150,7 +150,7 @@ class ExamController extends Controller {
     return this.facade.find().then((exams) => {
       if (exams.length === 0) {
         return res.send({
-          text: 'Sorry, no exams found.'
+          text: 'Sorry, no exams found!!!!!!'
         });
       }
 
