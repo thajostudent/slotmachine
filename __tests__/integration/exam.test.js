@@ -123,7 +123,7 @@ describe('List exams', () => {
     return request(app)
       .post('/exams/list')
       .then((response) => {
-        expect(response.body.text).toEqual('Sorry, no exams found.');
+        expect(response.body.text).toEqual('Sorry, no exams found!!!!!!');
       });
   });
 
